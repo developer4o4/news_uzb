@@ -1,0 +1,2973 @@
+<nav class="navigation-wrapper" id="main-navigation">
+    <div class="navigation-container">
+        <!-- Logo -->
+        <div class="navigation-logo">
+            <a href="#" class="navigation-logo-link" aria-label="Yangiliklar Hub bosh sahifa">
+                <div class="navigation-logo-content">
+                    <div class="navigation-logo-icon">
+                        <div class="navigation-logo-symbol">YH</div>
+                    </div>
+                    <a href="/">
+                        <div class="navigation-logo-text">
+                        <span class="navigation-brand-name">Yangiliklar</span>
+                        <span class="navigation-brand-sub">Hub</span>
+                    </div>
+                    </a>
+                </div>
+            </a>
+        </div>
+
+        <!-- Search Bar (Desktop) -->
+        <div class="navigation-search-desktop">
+            <form class="navigation-search-form" role="search" aria-label="Yangiliklar qidirish"
+                onsubmit="return false;">
+                <div class="navigation-search-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        class="navigation-search-icon" aria-hidden="true">
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                            stroke-width="2">
+                            <path d="m21 21l-4.34-4.34" />
+                            <circle cx="11" cy="11" r="8" />
+                        </g>
+                    </svg>
+
+                    <input type="search" id="searchInputDesktop" placeholder="Yangiliklarni qidiring..."
+                        class="navigation-search-input" autocomplete="off">
+                    <div id="suggestionsBoxDesktop" class="suggestions-box"></div>
+                </div>
+            </form>
+        </div>
+        <style>
+            .suggestions-box {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                background: #fff;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                width: 100%;
+                max-height: 220px;
+                overflow-y: auto;
+                z-index: 9999;
+                display: none;
+            }
+
+            .suggestion-item {
+                padding: 10px;
+                cursor: pointer;
+                border-bottom: 1px solid #eee;
+            }
+
+            .suggestion-item:hover {
+                background: #f5f5f5;
+            }
+        </style>
+
+        <!-- Desktop Navigation -->
+        <div class="navigation-menu-desktop">
+            <ul class="navigation-menu-list" role="menubar">
+                {% for i in all_category %}
+                <li class="navigation-menu-item" role="none">
+                    <a href="#" class="navigation-menu-link" role="menuitem">{{i.title}}</a>
+                </li>
+                {% endfor %}
+                <!-- <li class="navigation-menu-item" role="none">
+                    <a href="#" class="navigation-menu-link" role="menuitem">Jamiyat</a>
+                </li>
+                <li class="navigation-menu-item" role="none">
+                    <a href="#" class="navigation-menu-link" role="menuitem">Iqtisodiyot</a>
+                </li>
+                <li class="navigation-menu-item" role="none">
+                    <a href="#" class="navigation-menu-link" role="menuitem">Sport</a>
+                </li>
+                <li class="navigation-menu-item" role="none">
+                    <a href="#" class="navigation-menu-link" role="menuitem">Texnologiya</a>
+                </li>
+                <li class="navigation-menu-item" role="none">
+                    <a href="#" class="navigation-menu-link" role="menuitem">Madaniyat</a>
+                </li>
+                <li class="navigation-menu-item" role="none">
+                    <a href="#" class="navigation-menu-link" role="menuitem">Aloqa</a>
+                </li> -->
+            </ul>
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="navigation-mobile-toggle" id="mobile-menu-toggle" aria-label="Menyuni ochish"
+            aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                class="navigation-toggle-icon navigation-menu-icon" aria-hidden="true">
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 5h16M4 12h16M4 19h16" />
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                class="navigation-toggle-icon navigation-close-icon" aria-hidden="true">
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M18 6L6 18M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+    <script>
+        function setupLiveSearch(inputId, boxId) {
+            const input = document.getElementById(inputId);
+            const suggestionsBox = document.getElementById(boxId);
+
+            if (!input) return;
+
+            input.addEventListener("keyup", function () {
+                let query = this.value.trim();
+                if (query.length < 2) {
+                    suggestionsBox.style.display = "none";
+                    return;
+                }
+
+                fetch(`/search-suggest/?q=${query}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        suggestionsBox.innerHTML = "";
+                        if (data.results.length > 0) {
+                            data.results.forEach(item => {
+                                let div = document.createElement("div");
+                                div.classList.add("suggestion-item");
+                                div.textContent = item.title;
+                                div.addEventListener("click", () => {
+                                    window.location.href = item.url;
+                                });
+                                suggestionsBox.appendChild(div);
+                            });
+                            suggestionsBox.style.display = "block";
+                        } else {
+                            suggestionsBox.style.display = "none";
+                        }
+                    });
+            });
+
+            // tashqariga bosilganda yopilsin
+            document.addEventListener("click", function (e) {
+                if (!e.target.closest(`#${inputId}`) && !e.target.closest(`#${boxId}`)) {
+                    suggestionsBox.style.display = "none";
+                }
+            });
+        }
+
+        // desktop va mobile uchun chaqiramiz
+        document.addEventListener("DOMContentLoaded", function () {
+            setupLiveSearch("searchInputDesktop", "suggestionsBoxDesktop");
+            setupLiveSearch("searchInputMobile", "suggestionsBoxMobile");
+        });
+    </script>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="navigation-mobile-overlay" id="mobile-navigation-overlay">
+        <div class="navigation-mobile-content">
+            <!-- Mobile Search -->
+            <div class="navigation-search-mobile">
+                <form class="navigation-search-form" role="search" aria-label="Yangiliklar qidirish"
+                    onsubmit="return false;">
+                    <div class="navigation-search-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            class="navigation-search-icon" aria-hidden="true">
+                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2">
+                                <path d="m21 21l-4.34-4.34" />
+                                <circle cx="11" cy="11" r="8" />
+                            </g>
+                        </svg>
+                        <input type="search" id="searchInputMobile" placeholder="Yangiliklarni qidiring..."
+                            class="navigation-search-input" autocomplete="off">
+                        <div id="suggestionsBoxMobile" class="suggestions-box"></div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Mobile Menu -->
+            <ul class="navigation-mobile-menu" role="menu">
+                {% for i in all_category %}
+                <li class="navigation-mobile-item" role="none">
+                    <a href="#" class="navigation-mobile-link" role="menuitem">{{ i.title }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</nav>
+<style>
+    /* Navigation Wrapper */
+    .navigation-wrapper {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: var(--color-surface);
+        border-bottom: 1px solid var(--color-border);
+        backdrop-filter: blur(12px);
+        box-shadow: var(--shadow-level-1);
+    }
+
+    /* Navigation Container */
+    .navigation-container {
+        max-width: var(--content-max-width);
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--spacing-md) var(--spacing-lg);
+        gap: var(--spacing-lg);
+    }
+
+    /* Logo Styles */
+    .navigation-logo-link {
+        text-decoration: none;
+        transition: transform var(--animation-duration-fast) var(--animation-curve-primary);
+    }
+
+    .navigation-logo-link:hover {
+        transform: scale(1.02);
+    }
+
+    .navigation-logo-content {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+
+    .navigation-logo-icon {
+        position: relative;
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+        border-radius: var(--border-radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-level-2);
+    }
+
+    .navigation-logo-symbol {
+        font-family: var(--font-family-heading);
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-on-primary);
+        letter-spacing: var(--letter-spacing-tight);
+    }
+
+    .navigation-logo-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .navigation-brand-name {
+        font-family: var(--font-family-heading);
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-on-surface);
+        line-height: var(--line-height-tight);
+        letter-spacing: var(--letter-spacing-tight);
+    }
+
+    .navigation-brand-sub {
+        font-family: var(--font-family-heading);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-on-surface-secondary);
+        line-height: var(--line-height-tight);
+        letter-spacing: var(--letter-spacing-wide);
+    }
+
+    /* Desktop Search */
+    .navigation-search-desktop {
+        flex: 1;
+        max-width: 400px;
+        display: flex;
+    }
+
+    .navigation-search-form {
+        width: 100%;
+    }
+
+    .navigation-search-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: var(--color-surface-elevated);
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius-lg);
+        transition: all var(--animation-duration-fast) var(--animation-curve-primary);
+        overflow: hidden;
+    }
+
+    .navigation-search-wrapper:focus-within {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 10%, transparent);
+    }
+
+    .navigation-search-icon {
+        position: absolute;
+        left: var(--spacing-md);
+        color: var(--color-on-surface-secondary);
+        z-index: 2;
+    }
+
+    .navigation-search-input {
+        flex: 1;
+        padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) calc(var(--spacing-md) * 3);
+        border: none;
+        background: transparent;
+        color: var(--color-on-surface);
+        font-family: var(--font-family-body);
+        font-size: var(--font-size-md);
+        outline: none;
+    }
+
+    .navigation-search-input::placeholder {
+        color: var(--color-on-surface-secondary);
+    }
+
+    .navigation-search-btn {
+        margin: 4px;
+        padding: calc(var(--spacing-sm) - 4px) var(--spacing-md);
+        border-radius: calc(var(--border-radius-lg) - 4px);
+        white-space: nowrap;
+    }
+
+    /* Desktop Navigation Menu */
+    .navigation-menu-desktop {
+        display: flex;
+    }
+
+    .navigation-menu-list {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .navigation-menu-item {
+        position: relative;
+    }
+
+    .navigation-menu-link {
+        display: block;
+        padding: var(--spacing-sm) var(--spacing-md);
+        color: var(--color-on-surface);
+        text-decoration: none;
+        font-family: var(--font-family-body);
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-medium);
+        border-radius: var(--border-radius-md);
+        transition: all var(--animation-duration-fast) var(--animation-curve-primary);
+        white-space: nowrap;
+    }
+
+    .navigation-menu-link:hover {
+        background: var(--color-surface-elevated);
+        color: var(--color-primary);
+        transform: translateY(-1px);
+    }
+
+    .navigation-menu-link:active {
+        transform: translateY(0);
+    }
+
+    /* Mobile Toggle Button */
+    .navigation-mobile-toggle {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        padding: 0;
+        background: transparent;
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius-md);
+        color: var(--color-on-surface);
+        cursor: pointer;
+        transition: all var(--animation-duration-fast) var(--animation-curve-primary);
+    }
+
+    .navigation-mobile-toggle:hover {
+        background: var(--color-surface-elevated);
+        border-color: var(--color-primary);
+    }
+
+    .navigation-toggle-icon {
+        transition: all var(--animation-duration-fast) var(--animation-curve-primary);
+    }
+
+    .navigation-close-icon {
+        opacity: 0;
+        transform: rotate(90deg);
+        position: absolute;
+    }
+
+    .navigation-mobile-toggle[aria-expanded="true"] .navigation-menu-icon {
+        opacity: 0;
+        transform: rotate(-90deg);
+    }
+
+    .navigation-mobile-toggle[aria-expanded="true"] .navigation-close-icon {
+        opacity: 1;
+        transform: rotate(0deg);
+    }
+
+    /* Mobile Navigation Overlay */
+    .navigation-mobile-overlay {
+        position: fixed;
+        top: 100%;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--color-surface);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-20px);
+        transition: all var(--animation-duration-standard) var(--animation-curve-primary);
+        z-index: 99;
+        border-top: 1px solid var(--color-border);
+    }
+
+    .navigation-mobile-overlay.navigation-active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .navigation-mobile-content {
+        padding: var(--spacing-lg);
+        max-height: calc(100vh - 80px);
+        overflow-y: auto;
+    }
+
+    /* Mobile Search */
+    .navigation-search-mobile {
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .navigation-search-mobile .navigation-search-wrapper {
+        border-radius: var(--border-radius-md);
+    }
+
+    .navigation-search-mobile .navigation-search-input {
+        padding-right: var(--spacing-md);
+    }
+
+    /* Mobile Menu */
+    .navigation-mobile-menu {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+
+    .navigation-mobile-link {
+        display: block;
+        padding: var(--spacing-md) var(--spacing-lg);
+        color: var(--color-on-surface);
+        text-decoration: none;
+        font-family: var(--font-family-body);
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-medium);
+        border-radius: var(--border-radius-md);
+        border: 1px solid transparent;
+        transition: all var(--animation-duration-fast) var(--animation-curve-primary);
+        white-space: nowrap;
+    }
+
+    .navigation-mobile-link:hover,
+    .navigation-mobile-link:focus {
+        background: var(--color-surface-elevated);
+        border-color: var(--color-border);
+        color: var(--color-primary);
+        transform: translateX(4px);
+    }
+
+    /* Tablet and Mobile Responsive */
+    @media (max-width: 991px) {
+        .navigation-search-desktop {
+            display: none;
+        }
+
+        .navigation-menu-desktop {
+            display: none;
+        }
+
+        .navigation-mobile-toggle {
+            display: flex;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .navigation-container {
+            padding: var(--spacing-sm) var(--spacing-md);
+        }
+
+        .navigation-logo-text {
+            display: none;
+        }
+
+        .navigation-logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .navigation-logo-symbol {
+            font-size: var(--font-size-md);
+        }
+    }
+
+    @media (max-width: 479px) {
+        .navigation-container {
+            gap: var(--spacing-md);
+        }
+
+        .navigation-mobile-content {
+            padding: var(--spacing-md);
+        }
+
+        .navigation-mobile-link {
+            font-size: var(--font-size-md);
+            padding: var(--spacing-md);
+        }
+    }
+
+    /* Focus States for Accessibility */
+    .navigation-logo-link:focus,
+    .navigation-menu-link:focus,
+    .navigation-mobile-link:focus,
+    .navigation-mobile-toggle:focus {
+        outline: 2px solid var(--focus-ring-color);
+        outline-offset: 2px;
+    }
+
+    .navigation-search-input:focus {
+        outline: none;
+    }
+
+    /* Smooth scroll behavior */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Reduced Motion Support */
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+</style>
+<script defer data-name="navigation">
+    const mobileToggle = document.getElementById('mobile-menu-toggle');
+    const mobileOverlay = document.getElementById('mobile-navigation-overlay');
+
+    function toggleMobileMenu() {
+        const isExpanded = mobileToggle.getAttribute('aria-expanded') === 'true';
+
+        mobileToggle.setAttribute('aria-expanded', !isExpanded);
+        mobileToggle.setAttribute('aria-label', isExpanded ? 'Menyuni ochish' : 'Menyuni yopish');
+
+        if (isExpanded) {
+            mobileOverlay.classList.remove('navigation-active');
+            document.body.style.overflow = '';
+        } else {
+            mobileOverlay.classList.add('navigation-active');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeMobileMenu() {
+        mobileToggle.setAttribute('aria-expanded', 'false');
+        mobileToggle.setAttribute('aria-label', 'Menyuni ochish');
+        mobileOverlay.classList.remove('navigation-active');
+        document.body.style.overflow = '';
+    }
+
+    mobileToggle.addEventListener('click', toggleMobileMenu);
+
+    // Close mobile menu when clicking on overlay
+    mobileOverlay.addEventListener('click', (e) => {
+        if (e.target === mobileOverlay) {
+            closeMobileMenu();
+        }
+    });
+
+    // Close mobile menu when clicking on mobile links
+    const mobileLinks = document.querySelectorAll('.navigation-mobile-link');
+    mobileLinks.forEach(link => {
+        link.addEventListener('click', closeMobileMenu);
+    });
+
+    // Close mobile menu on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && mobileOverlay.classList.contains('navigation-active')) {
+            closeMobileMenu();
+        }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 991) {
+            closeMobileMenu();
+        }
+    });
+</script>
+
+
+<script>
+    let slides = document.querySelectorAll(".hero-slide");
+    let current = 0;
+
+    function showSlide(index) {
+        slides.forEach((slide, i) => {
+            slide.classList.remove("active");
+            if (i === index) slide.classList.add("active");
+        });
+    }
+
+    function nextSlide() {
+        current = (current + 1) % slides.length;
+        showSlide(current);
+    }
+
+    setInterval(nextSlide, 5000); // har 5 soniyada almashadi
+</script>
+
+<style>
+    .hero-section {
+        position: relative;
+        overflow: hidden;
+        height: 600px;
+    }
+
+    .hero-slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+    }
+
+    .hero-slide.active {
+        opacity: 1;
+        z-index: 1;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.55);
+        /* qoramtir fon */
+    }
+
+    .hero-content {
+        position: absolute;
+        bottom: 100px;
+        left: 60px;
+        color: #fff;
+        max-width: 600px;
+        z-index: 2;
+    }
+
+    .hero-badge {
+        display: inline-block;
+        background: #007BFF;
+        padding: 5px 12px;
+        border-radius: 4px;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 15px 0;
+        line-height: 1.2;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        line-height: 1.4;
+    }
+
+    .hero-meta {
+        font-size: 0.95rem;
+        margin-bottom: 15px;
+        color: #ddd;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        background: #007BFF;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    .btn:hover {
+        background: #0056b3;
+    }
+
+    .category-preview {
+        position: relative;
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .category-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+    }
+
+    .category-img.active {
+        opacity: 1;
+        z-index: 1;
+    }
+</style>
+
+
+<style>
+    /* Design System & Root Variables */
+    :root {
+        --color-primary: #0066cc;
+        --color-secondary: #004999;
+        --color-accent: #ff6b35;
+        --color-neutral: #6b7280;
+        --color-surface: #ffffff;
+        --color-on-surface: #111827;
+        --color-on-surface-secondary: #6b7280;
+        --color-on-primary: #ffffff;
+        --color-surface-elevated: #f9fafb;
+        --color-border: #e5e7eb;
+        --color-outline: #d1d5db;
+        --color-overlay: rgba(0, 0, 0, 0.1);
+        --color-backplate: rgba(255, 255, 255, 0.95);
+        --color-scrim: rgba(0, 0, 0, 0.6);
+
+        --spacing-xs: 0.25rem;
+        --spacing-sm: 0.5rem;
+        --spacing-md: 1rem;
+        --spacing-lg: 1.5rem;
+        --spacing-xl: 2rem;
+        --spacing-2xl: 3rem;
+        --spacing-3xl: 4rem;
+        --spacing-4xl: 6rem;
+
+        --font-family-heading: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        --font-family-body: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        --font-size-hero: clamp(0.2rem, 8vw, 5rem);
+        --font-size-xl: clamp(1.75rem, 4vw, 2.25rem);
+        --font-size-lg: clamp(1.25rem, 3vw, 1.5rem);
+        --font-size-md: 1rem;
+        --font-size-sm: 0.875rem;
+        --font-size-xs: 0.75rem;
+        --font-weight-regular: 400;
+        --font-weight-medium: 500;
+        --font-weight-semibold: 600;
+        --line-height-tight: 1.25;
+        --line-height-default: 1.5;
+        --line-height-relaxed: 1.75;
+        --letter-spacing-tight: -0.025em;
+        --letter-spacing-normal: 0;
+        --letter-spacing-wide: 0.025em;
+
+        --border-radius-none: 0;
+        --border-radius-sm: 0.25rem;
+        --border-radius-md: 0.5rem;
+        --border-radius-lg: 0.75rem;
+        --border-radius-xl: 1rem;
+        --border-radius-full: 9999px;
+
+        --shadow-level-1: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --shadow-level-2: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-level-3: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+        --animation-curve-primary: cubic-bezier(0.4, 0.0, 0.2, 1);
+        --animation-duration-fast: 150ms;
+        --animation-duration-standard: 300ms;
+        --animation-duration-slow: 500ms;
+
+        --content-max-width: 72rem;
+        --section-gap: clamp(2rem, 4vw, 5rem);
+        --focus-ring-color: var(--color-primary);
+        --disabled-opacity: 0.5;
+    }
+
+    /* Reset & Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: var(--font-family-body);
+        font-size: var(--font-size-md);
+        line-height: var(--line-height-default);
+        color: var(--color-on-surface);
+        background-color: var(--color-surface);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    /* Typography System */
+    .section-title {
+        font-family: var(--font-family-heading);
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-semibold);
+        line-height: var(--line-height-tight);
+        letter-spacing: var(--letter-spacing-tight);
+        color: var(--color-on-surface);
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .section-subtitle {
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-regular);
+        line-height: var(--line-height-default);
+        color: var(--color-on-surface-secondary);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .section-content {
+        font-size: var(--font-size-md);
+        line-height: var(--line-height-relaxed);
+        color: var(--color-on-surface-secondary);
+    }
+
+    .hero-title {
+        font-family: var(--font-family-heading);
+        font-size: var(--font-size-hero);
+        font-weight: var(--font-weight-semibold);
+        line-height: var(--line-height-tight);
+        letter-spacing: var(--letter-spacing-tight);
+        color: var(--color-on-primary);
+    }
+
+    .hero-subtitle {
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-regular);
+        line-height: var(--line-height-default);
+        color: color-mix(in srgb, var(--color-on-primary) 90%, transparent);
+    }
+
+    /* Button System */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-sm) var(--spacing-lg);
+        border: none;
+        border-radius: var(--border-radius-md);
+        font-family: var(--font-family-body);
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-medium);
+        line-height: var(--line-height-tight);
+        text-decoration: none;
+        cursor: pointer;
+        transition: all var(--animation-duration-standard) var(--animation-curve-primary);
+        white-space: nowrap;
+    }
+
+    .btn-primary {
+        background-color: var(--color-primary);
+        color: var(--color-on-primary);
+        box-shadow: var(--shadow-level-1);
+    }
+
+    .btn-primary:hover {
+        background-color: var(--color-secondary);
+        box-shadow: var(--shadow-level-2);
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background-color: var(--color-surface-elevated);
+        color: var(--color-on-surface);
+        border: 1px solid var(--color-border);
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--color-surface);
+        border-color: var(--color-outline);
+    }
+
+    .btn-accent {
+        background-color: var(--color-accent);
+        color: var(--color-on-primary);
+    }
+
+    .btn-accent:hover {
+        background-color: color-mix(in srgb, var(--color-accent) 90%, black);
+    }
+
+    .btn-outline {
+        background-color: transparent;
+        color: var(--color-primary);
+        border: 1px solid var(--color-primary);
+    }
+
+    .btn-outline:hover {
+        background-color: var(--color-primary);
+        color: var(--color-on-primary);
+    }
+
+    .btn-link {
+        background-color: transparent;
+        color: var(--color-primary);
+        border: none;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+    }
+
+    .btn-link:hover {
+        color: var(--color-secondary);
+    }
+
+    .btn-sm {
+        padding: var(--spacing-xs) var(--spacing-md);
+        font-size: var(--font-size-sm);
+    }
+
+    .btn-lg {
+        padding: var(--spacing-md) var(--spacing-xl);
+        font-size: var(--font-size-lg);
+    }
+
+    .btn-xl {
+        padding: var(--spacing-lg) var(--spacing-2xl);
+        font-size: var(--font-size-xl);
+    }
+
+    /* Header Styles */
+    .header-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: var(--color-backplate);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--color-border);
+        box-shadow: var(--shadow-level-1);
+    }
+
+    .header-content {
+        max-width: var(--content-max-width);
+        margin: 0 auto;
+        padding: 0 var(--spacing-lg);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 4rem;
+    }
+
+    .logo-section {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+    }
+
+    .logo-mark {
+        width: 2.5rem;
+        height: 2.5rem;
+        background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+        border-radius: var(--border-radius-lg);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .logo-icon {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, transparent 30%, rgba(255, 255, 255, 0.2) 50%, transparent 70%);
+    }
+
+    .logo-text {
+        font-family: var(--font-family-heading);
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-on-surface);
+        letter-spacing: var(--letter-spacing-tight);
+    }
+
+    .main-navigation {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xl);
+    }
+
+    .nav-link {
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-on-surface-secondary);
+        text-decoration: none;
+        padding: var(--spacing-sm) 0;
+        position: relative;
+        transition: color var(--animation-duration-standard) var(--animation-curve-primary);
+    }
+
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--color-primary);
+        transition: width var(--animation-duration-standard) var(--animation-curve-primary);
+    }
+
+    .nav-link:hover {
+        color: var(--color-primary);
+    }
+
+    .nav-link:hover::after {
+        width: 100%;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-lg);
+    }
+
+    .search-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-input {
+        width: 300px;
+        padding: var(--spacing-sm) var(--spacing-lg);
+        padding-right: 3rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius-full);
+        font-size: var(--font-size-md);
+        background: var(--color-surface);
+        color: var(--color-on-surface);
+        transition: all var(--animation-duration-standard) var(--animation-curve-primary);
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 10%, transparent);
+    }
+
+    .search-button {
+        position: absolute;
+        right: var(--spacing-sm);
+        background: none;
+        border: none;
+        color: var(--color-on-surface-secondary);
+        cursor: pointer;
+        padding: var(--spacing-xs);
+        border-radius: var(--border-radius-sm);
+        transition: color var(--animation-duration-standard) var(--animation-curve-primary);
+    }
+
+    .search-button:hover {
+        color: var(--color-primary);
+    }
+
+    .mobile-menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--color-on-surface);
+        cursor: pointer;
+        padding: var(--spacing-sm);
+        border-radius: var(--border-radius-sm);
+    }
+
+    /* Hero Section */
+    .hero-section {
+        position: relative;
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        margin-top: 4rem;
+    }
+
+    .hero-background {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+    }
+
+    .hero-bg-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        background: linear-gradient(135deg, var(--color-scrim), color-mix(in srgb, var(--color-scrim) 70%, transparent));
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 3;
+        max-width: var(--content-max-width);
+        margin: 0 auto;
+        padding: var(--spacing-4xl) var(--spacing-lg);
+        color: var(--color-on-primary);
+        max-width: 85rem;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-sm) var(--spacing-lg);
+        background: color-mix(in srgb, var(--color-accent) 90%, transparent);
+        color: var(--color-on-primary);
+        border-radius: var(--border-radius-full);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-medium);
+        margin-bottom: var(--spacing-xl);
+        backdrop-filter: blur(10px);
+        border: 1px solid color-mix(in srgb, var(--color-on-primary) 20%, transparent);
+    }
+
+    .hero-title {
+        margin-bottom: var(--spacing-lg);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-subtitle {
+        margin-bottom: var(--spacing-xl);
+        max-width: 42rem;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .hero-meta {
+        display: flex;
+        gap: var(--spacing-xl);
+        margin-bottom: var(--spacing-2xl);
+    }
+
+    .hero-meta-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        font-size: var(--font-size-sm);
+        color: color-mix(in srgb, var(--color-on-primary) 80%, transparent);
+    }
+
+    .hero-cta {
+        transform: scale(1);
+        transition: transform var(--animation-duration-standard) var(--animation-curve-primary);
+    }
+
+    .hero-cta:hover {
+        transform: scale(1.05);
+    }
+
+    /* Main Layout */
+    .main-layout {
+        max-width: var(--content-max-width);
+        margin: 0 auto;
+        padding: var(--section-gap) var(--spacing-lg);
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: var(--spacing-4xl);
+        align-items: start;
+    }
+
+    /* News Grid Section */
+    .news-grid-section {
+        margin-bottom: var(--section-gap);
+    }
+
+    .news-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: var(--spacing-xl);
+    }
+
+    .news-card {
+        background: var(--color-surface);
+        border-radius: var(--border-radius-xl);
+        box-shadow: var(--shadow-level-1);
+        overflow: hidden;
+        transition: all var(--animation-duration-standard) var(--animation-curve-primary);
+        border: 1px solid var(--color-border);
+    }
+
+    .news-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-level-3);
+    }
+
+    .featured-card {
+        grid-column: span 2;
+    }
+
+    .news-card-image {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .featured-card .news-card-image {
+        height: 300px;
+    }
+
+    .news-card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform var(--animation-duration-slow) var(--animation-curve-primary);
+    }
+
+    .news-card:hover .news-card-image img {
+        transform: scale(1.05);
+    }
+
+    .news-category {
+        position: absolute;
+        top: var(--spacing-md);
+        left: var(--spacing-md);
+        padding: var(--spacing-xs) var(--spacing-md);
+        background: var(--color-accent);
+        color: var(--color-on-primary);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-medium);
+        border-radius: var(--border-radius-full);
+        text-transform: uppercase;
+        letter-spacing: var(--letter-spacing-wide);
+    }
+
+    .news-card-content {
+        padding: var(--spacing-xl);
+    }
+
+    .news-card-title {
+        font-family: var(--font-family-heading);
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
+        line-height: var(--line-height-tight);
+        color: var(--color-on-surface);
+        margin-bottom: var(--spacing-md);
+        transition: color var(--animation-duration-standard) var(--animation-curve-primary);
+    }
+
+    .featured-card .news-card-title {
+        font-size: var(--font-size-xl);
+    }
+
+    .news-card:hover .news-card-title {
+        color: var(--color-primary);
+    }
+
+    .news-card-excerpt {
+        color: var(--color-on-surface-secondary);
+        line-height: var(--line-height-relaxed);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .news-card-meta {
+        display: flex;
+        gap: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
+        font-size: var(--font-size-sm);
+        color: var(--color-on-surface-secondary);
+    }
+
+    .news-card-btn {
+        align-self: flex-start;
+    }
+
+    /* Categories Section */
+    .categories-section {
+        margin-bottom: var(--section-gap);
+    }
+
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--spacing-lg);
+    }
+
+    .category-card {
+        background: var(--color-surface-elevated);
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius-lg);
+        overflow: hidden;
+        cursor: pointer;
+        transition: all var(--animation-duration-standard) var(--animation-curve-primary);
+        position: relative;
+    }
+
+    .category-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-level-2);
+        border-color: var(--color-primary);
+    }
+
+    .category-card-header {
+        padding: var(--spacing-lg);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+        color: var(--color-on-primary);
+    }
+
+    .category-title {
+        font-family: var(--font-family-heading);
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
+        margin: 0;
+    }
+
+    .category-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+        background: color-mix(in srgb, var(--color-on-primary) 20%, transparent);
+        border-radius: var(--border-radius-sm);
+    }
+
+    .category-preview {
+        height: 150px;
+        overflow: hidden;
+    }
+
+    .category-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform var(--animation-duration-standard) var(--animation-curve-primary);
+    }
+
+    .category-card:hover .category-preview img {
+        transform: scale(1.1);
+    }
+
+    .category-stats {
+        padding: var(--spacing-lg);
+        background: var(--color-surface);
+    }
+
+    .category-count {
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-on-surface-secondary);
+    }
+
+    /* Sidebar */
+    .sidebar {
+        position: sticky;
+        top: calc(4rem + var(--spacing-lg));
+    }
+
+    .sidebar-section {
+        background: var(--color-surface-elevated);
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-xl);
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .sidebar-title {
+        font-family: var(--font-family-heading);
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-on-surface);
+        margin-bottom: var(--spacing-lg);
+        padding-bottom: var(--spacing-md);
+        border-bottom: 2px solid var(--color-primary);
+    }
+
+    .popular-news-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-lg);
+    }
+
+    .popular-news-item {
+        display: flex;
+        gap: var(--spacing-md);
+        padding: var(--spacing-md);
+        border-radius: var(--border-radius-md);
+        transition: background-color var(--animation-duration-standard) var(--animation-curve-primary);
+        cursor: pointer;
+    }
+
+    .popular-news-item:hover {
+        background: var(--color-surface);
+    }
+
+    .popular-news-image {
+        width: 80px;
+        height: 60px;
+        border-radius: var(--border-radius-sm);
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .popular-news-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .popular-news-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .popular-news-title {
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-medium);
+        line-height: var(--line-height-tight);
+        color: var(--color-on-surface);
+        margin-bottom: var(--spacing-sm);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .popular-news-meta {
+        font-size: var(--font-size-xs);
+        color: var(--color-on-surface-secondary);
+    }
+
+    .stats-widget {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-lg);
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: var(--spacing-md);
+        background: var(--color-surface);
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+    }
+
+    .stat-number {
+        font-family: var(--font-family-heading);
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-primary);
+        line-height: 1;
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .stat-label {
+        font-size: var(--font-size-xs);
+        color: var(--color-on-surface-secondary);
+        text-transform: uppercase;
+        letter-spacing: var(--letter-spacing-wide);
+    }
+
+    /* Footer */
+    .footer {
+        background: linear-gradient(135deg, var(--color-surface-elevated), var(--color-surface));
+        border-top: 1px solid var(--color-border);
+        padding: var(--spacing-4xl) 0 var(--spacing-xl);
+    }
+
+    .footer-content {
+        max-width: var(--content-max-width);
+        margin: 0 auto;
+        padding: 0 var(--spacing-lg);
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--spacing-2xl);
+    }
+
+    .footer-brand {
+        max-width: 300px;
+    }
+
+    .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .footer-description {
+        color: var(--color-on-surface-secondary);
+        line-height: var(--line-height-relaxed);
+        font-size: var(--font-size-sm);
+    }
+
+    .footer-section-title {
+        font-family: var(--font-family-heading);
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-on-surface);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .footer-nav {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .footer-link {
+        color: var(--color-on-surface-secondary);
+        text-decoration: none;
+        font-size: var(--font-size-md);
+        transition: color var(--animation-duration-standard) var(--animation-curve-primary);
+        white-space: nowrap;
+    }
+
+    .footer-link:hover {
+        color: var(--color-primary);
+    }
+
+    .social-links {
+        display: flex;
+        gap: var(--spacing-md);
+    }
+
+    .popup-message {
+        visibility: hidden;
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: rgba(0, 0, 0, 0.85);
+        color: #fff;
+        padding: 15px 20px;
+        border-radius: 6px;
+        font-size: 15px;
+        transition: all 0.3s ease-in-out;
+        z-index: 9999;
+    }
+
+    .popup-message.show {
+        visibility: visible;
+        transform: translateY(-10px);
+    }
+
+    .social-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius-lg);
+        color: var(--color-on-surface-secondary);
+        text-decoration: none;
+        transition: all var(--animation-duration-standard) var(--animation-curve-primary);
+    }
+
+    .social-link:hover {
+        background: var(--color-primary);
+        color: var(--color-on-primary);
+        border-color: var(--color-primary);
+        transform: translateY(-2px);
+    }
+
+    .footer-bottom {
+        max-width: var(--content-max-width);
+        margin: 0 auto;
+        padding: var(--spacing-xl) var(--spacing-lg) 0;
+        border-top: 1px solid var(--color-border);
+        margin-top: var(--spacing-2xl);
+        text-align: center;
+    }
+
+    .copyright {
+        color: var(--color-on-surface-secondary);
+        font-size: var(--font-size-sm);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 991px) {
+        .main-layout {
+            grid-template-columns: 1fr;
+            gap: var(--spacing-2xl);
+        }
+
+        .sidebar {
+            position: static;
+            order: 1;
+        }
+
+        .main-content {
+            order: 2;
+        }
+
+        .featured-card {
+            grid-column: span 1;
+        }
+
+        .news-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .categories-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .stats-widget {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .header-content {
+            padding: 0 var(--spacing-md);
+        }
+
+        .main-navigation {
+            display: none;
+        }
+
+        .mobile-menu-toggle {
+            display: block;
+        }
+
+        .search-input {
+            width: 200px;
+        }
+
+        .hero-content {
+            padding: var(--spacing-2xl) var(--spacing-md);
+        }
+
+        .hero-meta {
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .main-layout {
+            padding: var(--spacing-xl) var(--spacing-md);
+        }
+
+        .categories-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .footer-content {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .footer-nav {
+            align-items: center;
+        }
+
+        .social-links {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 479px) {
+        .hero-title {
+            font-size: clamp(2rem, 6vw, 3rem);
+        }
+
+        .search-container {
+            display: none;
+        }
+
+        .news-card-content {
+            padding: var(--spacing-lg);
+        }
+
+        .sidebar-section {
+            padding: var(--spacing-lg);
+        }
+    }
+
+    /* Animation Enhancements */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .news-card,
+    .category-card,
+    .popular-news-item {
+        animation: fadeInUp var(--animation-duration-slow) var(--animation-curve-primary);
+    }
+
+    /* Focus States */
+    .news-card:focus-within,
+    .category-card:focus-within,
+    .popular-news-item:focus-within {
+        outline: 2px solid var(--focus-ring-color);
+        outline-offset: 2px;
+    }
+
+    /* Accessibility */
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+
+    /* Print Styles */
+    @media print {
+
+        .header-container,
+        .sidebar,
+        .footer {
+            display: none;
+        }
+
+        .main-layout {
+            grid-template-columns: 1fr;
+            max-width: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .news-card {
+            break-inside: avoid;
+            box-shadow: none;
+            border: 1px solid var(--color-border);
+        }
+    }
+
+    .footer-social-section {
+        margin-top: 20px;
+    }
+
+    .footer-social-title {
+        font-size: 18px;
+        margin-bottom: 12px;
+        font-weight: bold;
+        color: #fff;
+    }
+
+    .footer-social-links {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .footer-social-link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #1da1f2;
+        /* Telegram rang */
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .footer-social-link svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .footer-social-link:hover {
+        color: #0d8af0;
+    }
+</style>
+<script defer data-name="Yangiliklar Hub Homepage">
+    // Mobile menu toggle functionality
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mainNav = document.getElementById('mainNav');
+
+    if (mobileMenuToggle && mainNav) {
+        mobileMenuToggle.addEventListener('click', function () {
+            mainNav.classList.toggle('mobile-menu-open');
+            this.setAttribute('aria-expanded',
+                this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'
+            );
+        });
+    }
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+
+    if (searchButton && searchInput) {
+        searchButton.addEventListener('click', function (e) {
+            e.preventDefault();
+            const searchTerm = searchInput.value.trim();
+            if (searchTerm) {
+                console.log('Qidiruv so\'rovi:', searchTerm);
+                // Search functionality would be implemented here
+                // For now, just showing the search term in console
+            }
+        });
+
+        searchInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                searchButton.click();
+            }
+        });
+    }
+
+    // Category card interactions
+    const categoryCards = document.querySelectorAll('.category-card');
+    categoryCards.forEach(card => {
+        card.addEventListener('click', function () {
+            const category = this.dataset.category;
+            console.log('Kategoriya tanlandi:', category);
+            // Navigation to category page would be implemented here
+        });
+
+        card.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+
+        // Make category cards focusable
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'button');
+    });
+
+    // News card interactions
+    const newsCards = document.querySelectorAll('.news-card');
+    newsCards.forEach(card => {
+        const cardButton = card.querySelector('.news-card-btn');
+        if (cardButton) {
+            cardButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                console.log('Maqola ochilmoqda...');
+                // Article page navigation would be implemented here
+            });
+        }
+    });
+
+    // Popular news item interactions
+    const popularNewsItems = document.querySelectorAll('.popular-news-item');
+    popularNewsItems.forEach(item => {
+        item.addEventListener('click', function () {
+            console.log('Mashhur yangilik ochilmoqda...');
+            // Article page navigation would be implemented here
+        });
+
+        item.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+
+        // Make popular news items focusable
+        item.setAttribute('tabindex', '0');
+        item.setAttribute('role', 'button');
+    });
+
+    // Header scroll behavior
+    let lastScrollTop = 0;
+    const header = document.getElementById('header');
+
+    window.addEventListener('scroll', function () {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+        if (scrollTop > lastScrollTop && scrollTop > 100) {
+            // Scrolling down
+            header.style.transform = 'translateY(-100%)';
+        } else {
+            // Scrolling up
+            header.style.transform = 'translateY(0)';
+        }
+
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    }, false);
+
+    // Intersection Observer for animation triggers
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const animateOnScroll = new IntersectionObserver(function (entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationPlayState = 'running';
+            }
+        });
+    }, observerOptions);
+
+    // Apply animation observer to cards
+    document.querySelectorAll('.news-card, .category-card').forEach(card => {
+        card.style.animationPlayState = 'paused';
+        animateOnScroll.observe(card);
+    });
+
+    // Social media link interactions
+    const socialLinks = document.querySelectorAll('.social-link');
+    socialLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            const platform = this.getAttribute('aria-label');
+            console.log(`${platform} sahifasiga o'tilmoqda...`);
+            // Social media navigation would be implemented here
+        });
+    });
+
+    // Accessibility improvements
+    document.addEventListener('keydown', function (e) {
+        // Escape key handling for mobile menu
+        if (e.key === 'Escape' && mainNav && mainNav.classList.contains('mobile-menu-open')) {
+            mainNav.classList.remove('mobile-menu-open');
+            mobileMenuToggle.setAttribute('aria-expanded', 'false');
+            mobileMenuToggle.focus();
+        }
+    });
+
+    // Real-time updates simulation
+    function updateTimeStamps() {
+        const timeElements = document.querySelectorAll('.news-meta-time, .popular-news-meta span');
+        timeElements.forEach(element => {
+            // In a real application, this would update with actual time data
+            // For demonstration, we're just indicating that timestamps would be dynamic
+        });
+    }
+
+    // Initialize timestamp updates (would be replaced with real-time data in production)
+    setInterval(updateTimeStamps, 60000); // Update every minute
+
+    // Loading state management for dynamic content
+    function showLoadingState(element) {
+        element.style.opacity = '0.6';
+        element.style.pointerEvents = 'none';
+    }
+
+    function hideLoadingState(element) {
+        element.style.opacity = '1';
+        element.style.pointerEvents = 'auto';
+    }
+
+    // Performance optimization: Lazy loading for images
+    const imageObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                if (img.dataset.src) {
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                    imageObserver.unobserve(img);
+                }
+            }
+        });
+    });
+
+    // Apply lazy loading to images below the fold
+    document.querySelectorAll('img[data-src]').forEach(img => {
+        imageObserver.observe(img);
+    });
+
+    console.log('Yangiliklar Hub sahifasi yuklandi');
+</script>
+
+<main class="news-detail">
+    <article class="news-article">
+        <!-- Yangilik rasmi -->
+        <div class="news-image">
+            <img src="{{ news.img.url }}" alt="{{ news.title }}">
+        </div>
+
+        <!-- Yangilik sarlavhasi -->
+        <h1 class="news-title">{{ news.title }}</h1>
+
+        <!-- Meta ma'lumotlar -->
+        <div class="news-meta">
+            <span class="news-time">{{ news.time }}</span>
+            <span class="news-views">{{ news.see }} marta ko‘rildi</span>
+            <span class="news-category">
+                {% for cat in news.category.all %}
+                    <a href="#">{{ cat.title }}</a>{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </span>
+        </div>
+
+        <!-- Yangilik tavsifi -->
+        <div class="news-content">
+            <p>{{ news.descriptions|safe }}</p>
+        </div>
+    </article>
+
+    <!-- O‘xshash yangiliklar -->
+    <aside class="related-news">
+        <h2>O‘xshash yangiliklar</h2>
+        <ul>
+            {% for rel in related_news %}
+            <li>
+                <a href="{% url 'news_detail' rel.id %}">
+                    <img src="{{ rel.img.url }}" alt="{{ rel.title }}">
+                    <span>{{ rel.title }}</span>
+                </a>
+            </li>
+            {% empty %}
+            <li>Hozircha boshqa yangiliklar yo‘q</li>
+            {% endfor %}
+        </ul>
+    </aside>
+</main>
+
+<style>
+.news-detail {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: Arial, sans-serif;
+}
+
+.news-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.news-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 20px 0 10px;
+}
+
+.news-meta {
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.news-meta span {
+    margin-right: 15px;
+}
+
+.news-content {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+}
+
+.related-news h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.related-news ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.related-news li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.related-news img {
+    width: 60px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+</style>
+
+<footer class="footer">
+    <!-- Newsletter Section with curved divider -->
+    <div class="footer-newsletter-section">
+        <div class="footer-curved-divider">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M0,0 C150,120 350,120 600,60 C850,0 1050,0 1200,60 L1200,120 L0,120 Z"></path>
+            </svg>
+        </div>
+        <div class="footer-newsletter-container">
+            <div class="footer-newsletter-content">
+                <div class="footer-newsletter-text">
+                    <h1 class="section-title">Yangiliklar obunasi</h1>
+                    <h4 class="section-content" style="color:#fff;">Eng muhim yangiliklar va tahlillardan darhol
+                        xabardor bo'ling</h4>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Footer Content -->
+    <div class="footer-main-content">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <!-- Company Info -->
+                <div class="footer-company-section">
+                    <div class="footer-logo">
+                        <div class="footer-logo-icon">
+                            <div class="footer-logo-circle"></div>
+                            <div class="footer-logo-text">YH</div>
+                        </div>
+                        <span class="footer-logo-name">Yangiliklar Hub</span>
+                    </div>
+                    <p class="footer-description">O'zbekistonning eng ishonchli yangiliklar manbai. Professional
+                        jurnalistika va obyektiv xabar berish.</p>
+
+                    <!-- Social Media -->
+                    <div class="footer-social-section">
+                        <h4 class="footer-social-title">Ijtimoiy tarmoqlar</h4>
+                        <div class="footer-social-links">
+
+                            <p>Telegram orqali bizni kuzating</p>
+                            <a href="#" class="footer-social-link" aria-label="Telegram">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                        stroke-linejoin="round" stroke-width="2"
+                                        d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11zm7.318-19.539l-10.94 10.939" />
+                                </svg>
+
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-links-section">
+                    <h4 class="footer-section-title">Tezkor havolalar</h4>
+                    <nav class="footer-links">
+                        <a href="#" class="footer-link">Bosh sahifa</a>
+                        <a href="#" class="footer-link">Siyosat</a>
+                        <a href="#" class="footer-link">Jamiyat</a>
+                        <a href="#" class="footer-link">Iqtisodiyot</a>
+                        <a href="#" class="footer-link">Sport</a>
+                        <a href="#" class="footer-link">Texnologiya</a>
+                    </nav>
+                </div>
+
+                <!-- Legal Links -->
+                <div class="footer-legal-section">
+                    <h4 class="footer-section-title">Ma'lumot</h4>
+                    <nav class="footer-links">
+                        <a href="#" class="footer-link">Biz haqimizda</a>
+                        <a href="#" class="footer-link">Maxfiylik siyosati</a>
+                        <a href="#" class="footer-link">Foydalanish shartlari</a>
+                        <a href="#" class="footer-link">Reklama</a>
+                        <a href="#" class="footer-link">Vakansiyalar</a>
+                        <a href="#" class="footer-link">Aloqa</a>
+                    </nav>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="footer-contact-section">
+                    <h4 class="footer-section-title">Bog‘lanish</h4>
+                    <form id="contactForm" method="post" action="{% url 'send_message' %}"
+                        class="footer-newsletter-form">
+                        {% csrf_token %}
+                        <div class="footer-input-group">
+                            <div class="footer-input-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
+                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2">
+                                        <path d="m22 7l-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+                                        <rect width="20" height="16" x="2" y="4" rx="2" />
+                                    </g>
+                                </svg>
+                            </div>
+                            <input type="text" name="message" placeholder="Murojaat matnini kiriting..."
+                                class="footer-input" required />
+                        </div>
+
+                        <div class="footer-input-group">
+                            <div class="footer-input-icon">
+                                📞
+                            </div>
+                            <input type="tel" id="phone" name="phone" placeholder="+998 XX XXX XX XX"
+                                class="footer-input" maxlength="17" required />
+
+                        </div>
+
+                        <button type="submit" class="btn btn-primary footer-submit-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11zm7.318-19.539l-10.94 10.939" />
+                            </svg>
+                            <span>Yuborish</span>
+                        </button>
+                    </form>
+                </div>
+                <script>
+                    document.getElementById("contactForm").addEventListener("submit", function (e) {
+                        e.preventDefault(); // formani to‘g‘ridan-to‘g‘ri yubormaydi
+
+                        let formData = new FormData(this);
+
+                        fetch("{% url 'send_message' %}", {
+                            method: "POST",
+                            body: formData,
+                            headers: {
+                                "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+                            }
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                alert(data.message);
+                            });
+                    });
+
+                    document.getElementById("phone").addEventListener("input", function (e) {
+                        let value = e.target.value.replace(/\D/g, ""); // faqat raqamlarni qoldiramiz
+                        if (!value.startsWith("998")) {
+                            value = "998" + value; // avtomatik 998 qo‘shiladi
+                        }
+
+                        // Formatlash: +998 XX XXX XX XX
+                        let formatted = "+";
+                        if (value.length > 0) formatted += value.substring(0, 3);
+                        if (value.length > 3) formatted += " " + value.substring(3, 5);
+                        if (value.length > 5) formatted += " " + value.substring(5, 8);
+                        if (value.length > 8) formatted += " " + value.substring(8, 10);
+                        if (value.length > 10) formatted += " " + value.substring(10, 12);
+
+                        e.target.value = formatted;
+                    });
+                </script>
+
+                <style>
+                    .footer-contact-section {
+                        margin-top: 25px;
+                    }
+
+                    .footer-section-title {
+                        font-size: 18px;
+                        font-weight: bold;
+                        margin-bottom: 15px;
+                        color: #fff;
+                    }
+
+                    .footer-newsletter-form {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 12px;
+                    }
+
+                    .footer-input-group {
+                        display: flex;
+                        align-items: center;
+                        background: #2b2b2b;
+                        border: 1px solid #444;
+                        border-radius: 6px;
+                        padding: 8px 12px;
+                    }
+
+                    .footer-input-icon {
+                        margin-right: 8px;
+                        color: #aaa;
+                        font-size: 18px;
+                        display: flex;
+                        align-items: center;
+                    }
+
+                    .footer-input {
+                        flex: 1;
+                        border: none;
+                        outline: none;
+                        background: transparent;
+                        color: #000;
+                        font-size: 14px;
+                        padding: 8px 0;
+                    }
+
+                    .footer-submit-btn {
+                        margin-top: 8px;
+                        padding: 12px;
+                        border: none;
+                        border-radius: 6px;
+                        background: #007bff;
+                        color: #ffd;
+                        font-size: 15px;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        justify-content: center;
+                        transition: background 0.3s;
+                    }
+
+                    .footer-submit-btn:hover {
+                        background: #0056b3;
+                    }
+                </style>
+
+                <!-- Popup Modal -->
+                <div id="popupMessage" class="popup-message">
+                    <div class="popup-content">
+                        <span id="popupText"></span>
+                    </div>
+                </div>
+
+                <script>
+                    document.getElementById("contactForm").addEventListener("submit", function (e) {
+                        e.preventDefault();
+
+                        let input = this.querySelector("input[name='message']");
+                        let message = input.value.trim();
+
+                        if (message) {
+                            // Serverga yuborilgan deb tasavvur qilamiz
+                            showPopup("✅ Murojaat yuborildi!");
+                            input.value = "";
+                        } else {
+                            showPopup("❌ Xatolik: matn kiritilmadi!");
+                        }
+                    });
+
+                    function showPopup(text) {
+                        let popup = document.getElementById("popupMessage");
+                        let popupText = document.getElementById("popupText");
+                        popupText.innerText = text;
+                        popup.classList.add("show");
+
+                        setTimeout(() => {
+                            popup.classList.remove("show");
+                        }, 3000); // 3 soniyadan keyin yopiladi
+                    }
+                </script>
+
+
+                <!-- <div class="footer-contact-info">
+                        <div class="footer-contact-item">
+                            <div class="footer-contact-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                        stroke-linejoin="round" stroke-width="2"
+                                        d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233a14 14 0 0 0 6.392 6.384" />
+                                </svg>
+                            </div>
+                            <span>+998 95 702 10 12</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <div class="footer-contact-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2">
+                                        <path d="m22 7l-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+                                        <rect width="20" height="16" x="2" y="4" rx="2" />
+                                    </g>
+                                </svg>
+                            </div>
+                            <span>info@yangiliklarHub.uz</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <div class="footer-contact-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                        stroke-linejoin="round" stroke-width="2"
+                                        d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0zm.894.211v15M9 3.236v15" />
+                                </svg>
+                            </div>
+                            <span>Toshkent sh., Chilonzor t., A.Qodiriy ko'chasi 12A</span>
+                        </div>
+                    </div> -->
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="footer-bottom">
+        <div class="footer-container">
+            <div class="footer-bottom-content">
+                <div class="footer-copyright">
+                    <span>© 2025 Yangiliklar Hub. Barcha huquqlar himoyalangan.</span>
+                    <div class="footer-uzbekistan-flag">
+                        <div class="footer-flag-stripe footer-flag-blue"></div>
+                        <div class="footer-flag-stripe footer-flag-white"></div>
+                        <div class="footer-flag-stripe footer-flag-green"></div>
+                    </div>
+                </div>
+                <button class="footer-scroll-top" id="footerScrollTop" aria-label="Sahifa boshiga o'tish">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                            stroke-width="2" d="m5 12l7-7l7 7m-7 7V5" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</footer>
+<style>
+    .footer {
+        background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-elevated) 100%);
+        position: relative;
+        color: var(--color-on-surface);
+    }
+
+    /* Newsletter Section */
+    .footer-newsletter-section {
+        position: relative;
+        background: var(--color-primary);
+        color: var(--color-on-primary);
+        padding: var(--spacing-4xl) 0;
+        overflow: hidden;
+    }
+
+    .footer-curved-divider {
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+        z-index: 2;
+    }
+
+    .footer-curved-divider svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 120px;
+        fill: var(--color-surface);
+        transform: rotateY(180deg);
+    }
+
+    .footer-newsletter-container {
+        max-width: var(--content-max-width);
+        margin: 0 auto;
+        padding: 0 var(--spacing-lg);
+        position: relative;
+        z-index: 3;
+    }
+
+    .footer-newsletter-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-2xl);
+        align-items: center;
+    }
+
+    .footer-newsletter-text h3 {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-semibold);
+        margin-bottom: var(--spacing-sm);
+        color: var(--color-on-primary);
+    }
+
+    .footer-newsletter-text p {
+        font-size: var(--font-size-md);
+        opacity: 0.9;
+        line-height: var(--line-height-relaxed);
+    }
+
+    .footer-input-group {
+        position: relative;
+        display: flex;
+        background: var(--color-surface);
+        border-radius: var(--border-radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-level-2);
+        transition: transform var(--animation-duration-standard) var(--animation-curve-primary);
+    }
+
+    .footer-input-group:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-level-3);
+    }
+
+    .footer-input-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 var(--spacing-md);
+        color: var(--color-on-surface-secondary);
+    }
+
+    .footer-email-input {
+        flex: 1;
+        padding: var(--spacing-md) 0;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: var(--color-on-surface);
+        font-size: var(--font-size-md);
+    }
+
+    .footer-email-input::placeholder {
+        color: var(--color-on-surface-secondary);
+    }
+
+    .footer-submit-btn {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-md) var(--spacing-lg);
+        border: none;
+        border-radius: 0;
+        white-space: nowrap;
+    }
+
+    /* Main Footer Content */
+    .footer-main-content {
+        padding: var(--spacing-4xl) 0 var(--spacing-2xl);
+        background: var(--color-surface);
+    }
+
+    .footer-container {
+        max-width: var(--content-max-width);
+        margin: 0 auto;
+        padding: 0 var(--spacing-lg);
+    }
+
+    .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1.5fr;
+        gap: var(--spacing-2xl);
+    }
+
+    /* Company Section */
+    .footer-company-section {
+        max-width: 400px;
+    }
+
+    .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .footer-logo-icon {
+        position: relative;
+        width: 48px;
+        height: 48px;
+        background: var(--color-primary);
+        border-radius: var(--border-radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .footer-logo-circle {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background: var(--color-accent);
+        border-radius: 50%;
+        top: 8px;
+        right: 8px;
+        opacity: 0.3;
+    }
+
+    .footer-logo-text {
+        font-weight: var(--font-weight-semibold);
+        font-size: var(--font-size-lg);
+        color: var(--color-on-primary);
+        position: relative;
+        z-index: 2;
+    }
+
+    .footer-logo-name {
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-on-surface);
+    }
+
+    .footer-description {
+        color: var(--color-on-surface-secondary);
+        line-height: var(--line-height-relaxed);
+        margin-bottom: var(--spacing-xl);
+    }
+
+    /* Social Media */
+    .footer-social-section {
+        margin-top: var(--spacing-xl);
+    }
+
+    .footer-social-title {
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-on-surface);
+        margin-bottom: var(--spacing-md);
+    }
+
+    .footer-social-links {
+        display: flex;
+        gap: var(--spacing-sm);
+    }
+
+    .footer-social-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        background: var(--color-surface-elevated);
+        border-radius: var(--border-radius-md);
+        color: var(--color-on-surface);
+        text-decoration: none;
+        transition: all var(--animation-duration-fast) var(--animation-curve-primary);
+        border: 1px solid var(--color-border);
+    }
+
+    .footer-social-link:hover {
+        background: var(--color-primary);
+        color: var(--color-on-primary);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-level-2);
+    }
+
+    /* Footer Sections */
+    .footer-section-title {
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-on-surface);
+        margin-bottom: var(--spacing-lg);
+        position: relative;
+    }
+
+    .footer-section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 30px;
+        height: 2px;
+        background: var(--color-accent);
+        border-radius: var(--border-radius-full);
+    }
+
+    .footer-links {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .footer-link {
+        color: var(--color-on-surface-secondary);
+        text-decoration: none;
+        font-size: var(--font-size-sm);
+        line-height: var(--line-height-default);
+        transition: color var(--animation-duration-fast) var(--animation-curve-primary);
+        white-space: nowrap;
+        position: relative;
+        padding-left: var(--spacing-md);
+    }
+
+    .footer-link::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 4px;
+        background: var(--color-accent);
+        border-radius: 50%;
+        opacity: 0;
+        transition: opacity var(--animation-duration-fast) var(--animation-curve-primary);
+    }
+
+    .footer-link:hover {
+        color: var(--color-primary);
+        padding-left: var(--spacing-lg);
+    }
+
+    .footer-link:hover::before {
+        opacity: 1;
+    }
+
+    /* Contact Section */
+    .footer-contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .footer-contact-item {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+        font-size: var(--font-size-sm);
+        color: var(--color-on-surface-secondary);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .footer-contact-icon {
+        flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+        color: var(--color-accent);
+        margin-top: 2px;
+    }
+
+    /* Bottom Bar */
+    .footer-bottom {
+        background: var(--color-surface-elevated);
+        padding: var(--spacing-lg) 0;
+        border-top: 1px solid var(--color-border);
+    }
+
+    .footer-bottom-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .footer-copyright {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        color: var(--color-on-surface-secondary);
+        font-size: var(--font-size-sm);
+    }
+
+    .footer-uzbekistan-flag {
+        display: flex;
+        flex-direction: column;
+        width: 24px;
+        height: 16px;
+        border-radius: 2px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .footer-flag-stripe {
+        flex: 1;
+    }
+
+    .footer-flag-blue {
+        background: #0099cc;
+    }
+
+    .footer-flag-white {
+        background: #ffffff;
+    }
+
+    .footer-flag-green {
+        background: #00cc66;
+    }
+
+    .footer-scroll-top {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        background: var(--color-primary);
+        color: var(--color-on-primary);
+        border: none;
+        border-radius: var(--border-radius-md);
+        cursor: pointer;
+        transition: all var(--animation-duration-fast) var(--animation-curve-primary);
+    }
+
+    .footer-scroll-top:hover {
+        background: var(--color-secondary);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-level-2);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 991px) {
+        .footer-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+        }
+
+        .footer-newsletter-content {
+            grid-template-columns: 1fr;
+            text-align: center;
+            gap: var(--spacing-xl);
+        }
+    }
+
+    @media (max-width: 767px) {
+        .footer-newsletter-section {
+            padding: var(--spacing-2xl) 0;
+        }
+
+        .footer-newsletter-content {
+            gap: var(--spacing-lg);
+        }
+
+        .footer-input-group {
+            flex-direction: column;
+        }
+
+        .footer-submit-btn {
+            justify-content: center;
+            border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+        }
+
+        .footer-main-content {
+            padding: var(--spacing-2xl) 0 var(--spacing-lg);
+        }
+
+        .footer-grid {
+            grid-template-columns: 1fr;
+            gap: var(--spacing-xl);
+        }
+
+        .footer-company-section {
+            max-width: none;
+            text-align: center;
+        }
+
+        .footer-logo {
+            justify-content: center;
+        }
+
+        .footer-social-links {
+            justify-content: center;
+        }
+
+        .footer-bottom-content {
+            flex-direction: column;
+            gap: var(--spacing-md);
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 479px) {
+
+        .footer-newsletter-container,
+        .footer-container {
+            padding: 0 var(--spacing-md);
+        }
+
+        .footer-newsletter-text h3 {
+            font-size: var(--font-size-lg);
+        }
+
+        .footer-input-group {
+            border-radius: var(--border-radius-md);
+        }
+
+        .footer-social-links {
+            flex-wrap: wrap;
+        }
+
+        .footer-copyright {
+            flex-direction: column;
+            gap: var(--spacing-sm);
+            text-align: center;
+        }
+    }
+</style>
+<script defer data-name="footer">
+    // Smooth scroll to top functionality
+    const scrollTopBtn = document.getElementById('footerScrollTop');
+
+    if (scrollTopBtn) {
+        scrollTopBtn.addEventListener('click', function () {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Show/hide scroll to top button based on scroll position
+        window.addEventListener('scroll', function () {
+            if (window.pageYOffset > 300) {
+                scrollTopBtn.style.opacity = '1';
+                scrollTopBtn.style.transform = 'translateY(0)';
+            } else {
+                scrollTopBtn.style.opacity = '0';
+                scrollTopBtn.style.transform = 'translateY(10px)';
+            }
+        });
+
+        // Initial state
+        scrollTopBtn.style.transition = 'all 0.3s ease';
+        scrollTopBtn.style.opacity = '0';
+        scrollTopBtn.style.transform = 'translateY(10px)';
+    }
+
+    // Newsletter form submission
+    const newsletterForm = document.querySelector('.footer-input-group');
+    const emailInput = document.querySelector('.footer-email-input');
+    const submitBtn = document.querySelector('.footer-submit-btn');
+
+    if (newsletterForm && emailInput && submitBtn) {
+        submitBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const email = emailInput.value.trim();
+            if (email && isValidEmail(email)) {
+                // Add success animation
+                submitBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 6L9 17l-5-5"/></svg><span>Muvaffaqiyatli!</span>';
+                submitBtn.style.background = 'var(--color-accent)';
+
+                setTimeout(() => {
+                    emailInput.value = '';
+                    submitBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11zm7.318-19.539l-10.94 10.939"/></svg><span>Obuna bo\'lish</span>';
+                    submitBtn.style.background = '';
+                }, 2000);
+            } else {
+                // Add error animation
+                newsletterForm.style.border = '2px solid #dc2626';
+                setTimeout(() => {
+                    newsletterForm.style.border = '';
+                }, 1000);
+            }
+        });
+    }
+
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    // Social link hover effects
+    const socialLinks = document.querySelectorAll('.footer-social-link');
+    socialLinks.forEach(link => {
+        link.addEventListener('mouseenter', function () {
+            this.style.transform = 'translateY(-2px) scale(1.05)';
+        });
+
+        link.addEventListener('mouseleave', function () {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+</script>
+
+
