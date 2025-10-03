@@ -67,28 +67,10 @@
         <div class="navigation-menu-desktop">
             <ul class="navigation-menu-list" role="menubar">
                 {% for i in all_category %}
-                <li class="navigation-menu-item" role="none">
-                    <a href="#" class="navigation-menu-link" role="menuitem">{{i.title}}</a>
-                </li>
+                    <li class="navigation-menu-item" role="none">
+                        <a href="{% url 'category_one' i.id %}" class="navigation-menu-link" role="menuitem">{{i.title}}</a>
+                    </li>
                 {% endfor %}
-                <!-- <li class="navigation-menu-item" role="none">
-                    <a href="#" class="navigation-menu-link" role="menuitem">Jamiyat</a>
-                </li>
-                <li class="navigation-menu-item" role="none">
-                    <a href="#" class="navigation-menu-link" role="menuitem">Iqtisodiyot</a>
-                </li>
-                <li class="navigation-menu-item" role="none">
-                    <a href="#" class="navigation-menu-link" role="menuitem">Sport</a>
-                </li>
-                <li class="navigation-menu-item" role="none">
-                    <a href="#" class="navigation-menu-link" role="menuitem">Texnologiya</a>
-                </li>
-                <li class="navigation-menu-item" role="none">
-                    <a href="#" class="navigation-menu-link" role="menuitem">Madaniyat</a>
-                </li>
-                <li class="navigation-menu-item" role="none">
-                    <a href="#" class="navigation-menu-link" role="menuitem">Aloqa</a>
-                </li> -->
             </ul>
         </div>
 
@@ -2008,48 +1990,50 @@
 </script>
 
 <main class="news-detail">
-    <article class="news-article">
-        <!-- Yangilik rasmi -->
-        <div class="news-image">
-            <img src="{{ news.img.url }}" alt="{{ news.title }}">
-        </div>
+    <h2 class="section-title">{{category.title}}</h2>
+    {% for new in filtered_news %}
+        <article class="news-article">
+            <!-- Yangilik rasmi -->
+            <div class="news-image">
+                <img src="{{ new.img.url }}" alt="{{ new.title }}">
+            </div>
 
-        <!-- Yangilik sarlavhasi -->
-        <h1 class="news-title">{{ news.title }}</h1>
+            <!-- Yangilik sarlavhasi -->
+            <h1 class="news-title">{{ new.title }}</h1>
 
-        <!-- Meta ma'lumotlar -->
-        <div class="news-meta">
-            <span class="news-time">{{ news.time }}</span>
-            <span class="news-views">{{ news.see }} marta ko‘rildi</span>
-            <span class="news-category">
-                {% for cat in news.category.all %}
-                    <a href="#">{{ cat.title }}</a>{% if not forloop.last %}, {% endif %}
-                {% endfor %}
-            </span>
-        </div>
+            <!-- Meta ma'lumotlar -->
+            <div class="news-meta">
+                <span class="news-time">{{ new.time }}</span>
+                <span class="news-views">{{ new.see }} marta ko‘rildi</span>
+                <span class="news-category">
+                    {% for cat in news.category.all %}
+                        <a href="#">{{ cat.title }}</a>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </span>
+            </div>
 
-        <!-- Yangilik tavsifi -->
-        <div class="news-content">
-            <p>{{ news.descriptions }}</p>
-        </div>
-    </article>
-
-    <!-- O‘xshash yangiliklar -->
+            <!-- Yangilik tavsifi -->
+            <div class="news-content">
+                <p>{{ news.descriptions }}</p>
+            </div>
+        </article>
+    {% endfor %}
+    <!-- O‘xshash yangiliklar
     <aside class="related-news">
         <h2>O‘xshash yangiliklar</h2>
         <ul>
             {% for rel in related_news %}
-            <li>
-                <a href="{% url 'news_detail' rel.id %}">
-                    <img src="{{ rel.img.url }}" alt="{{ rel.title }}">
-                    <span>{{ rel.title }}</span>
-                </a>
-            </li>
+                <li>
+                    <a href="{% url 'news_detail' rel.id %}">
+                        <img src="{{ rel.img.url }}" alt="{{ rel.title }}">
+                        <span>{{ rel.title }}</span>
+                    </a>
+                </li>
             {% empty %}
-            <li>Hozircha boshqa yangiliklar yo‘q</li>
+                <li>Hozircha boshqa yangiliklar yo‘q</li>
             {% endfor %}
         </ul>
-    </aside>
+    </aside> -->
 </main>
 
 <style>
@@ -2126,7 +2110,7 @@
         <div class="footer-newsletter-container">
             <div class="footer-newsletter-content">
                 <div class="footer-newsletter-text">
-                    <h1 class="section-title">Yangiliklar</h1>
+                    <h1 class="section-title">Yangiliklar obunasi</h1>
                     <h4 class="section-content" style="color:#fff;">Eng muhim yangiliklar va tahlillardan darhol
                         xabardor bo'ling</h4>
                 </div>

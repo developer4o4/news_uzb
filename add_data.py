@@ -3,7 +3,6 @@ import django
 import requests
 import json
 from datetime import datetime
-import random
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
@@ -11,56 +10,59 @@ django.setup()
 from main.models import Category, News
 
 
-def save_news_from_json(json_file):
-    BASE_URL = "https://data.daryo.uz/media/"
+def fetch_news():
+    url = "https://kun.uz/news/list?f=latest&l=5"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:117.0) Gecko/20100101 Firefox/117.0",
+        "X-Requested-With": "XMLHttpRequest",   # 🔑 majburiy
+        "Accept": "application/json",           # 🔑 JSON deb qabul qilsin
+    }
+    resp = requests.get(url, headers=headers)
+    resp.raise_for_status()
+    return resp.json()   # endi JSON qaytadi
 
-    with open(json_file, "r", encoding="utf-8") as f:
-        data = json.load(f)
 
-    for item in data["news"]:
+def save_news_from_api():
+    data = fetch_news()
+    print(data)
+    print(len(data.get("news")))
+    for item in data.get("news", []):
         title = item.get("title")
         description = item.get("description")
-        image_path = item.get("image")  # masalan: 2025/10/02/xxxx.jpg
-        category_name = item.get("category_name")  # JSONdan olamiz
-        pub_date = item.get("pub_date")  # 2025-10-02 10:11:53
-        views_count = item.get("views_count")
+        image_url = item.get("image")
+        category_name = item.get("category_name")
+        pub_date = item.get("pub_date")  # misol: 03.10.2025
+        views_count = item.get("views_count", 0)
 
-        # 1️⃣ Category topiladi yoki yaratiladi
+        # Yangilik bor-yo‘qligini tekshirish
+        if News.objects.filter(title=title).exists():
+            continue
+
+        # Category topiladi yoki yaratiladi
         category, _ = Category.objects.get_or_create(title=category_name)
 
-        # 2️⃣ Rasmni yuklab olish
-        img_path = None
-        if image_path:
-            print(image_path)
-            # image_url = BASE_URL + image_path
-            # print(f"web sayt >>>>>>>>>>>>>{image_url}")
-            response = requests.get(image_path)
-            if response.status_code == 200:
-                filename = os.path.basename(image_path)  # faqat fayl nomi
-                folder_path = "media/news"
-                os.makedirs(folder_path, exist_ok=True)
-                file_path = os.path.join(folder_path, filename)
-                with open(file_path, "wb") as img_file:
-                    img_file.write(response.content)
-                    print(response.content)
-                img_path = f"news/{filename}"  # FileField uchun yo‘l
-
-        # 3️⃣ Sana formatini to‘g‘ri parse qilish
+        # Sana formatini to‘g‘ri parse qilish
         try:
-            time_obj = datetime.strptime(pub_date, "%Y-%m-%d %H:%M:%S")
+            time_obj = datetime.strptime(pub_date, "%d.%m.%Y")
         except ValueError:
             time_obj = datetime.now()
 
-        # 4️⃣ News yaratish
+        # News yaratish
         News.objects.create(
             category=category,
             title=title,
-            img=img_path if img_path else "default.jpg",
             descriptions=description,
+            img=image_url or "default.jpg",  # hozircha link saqlaymiz
             time=time_obj,
             see=views_count,
         )
+        print(f"✅ Yangi yangilik qo‘shildi: {title}")
 
 
+
+import time
 if __name__ == "__main__":
-    save_news_from_json("data.json")
+    while True:
+        save_news_from_api()
+        print("⏳ Keyingi tekshirishdan oldin 5 minut kutyapmiz...")
+        time.sleep(10)  # 300 sekund = 5 minut

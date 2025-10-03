@@ -66,7 +66,7 @@
             <ul class="navigation-menu-list" role="menubar">
                 {% for i in all_category %}
                 <li class="navigation-menu-item" role="none">
-                    <a href="#" class="navigation-menu-link" role="menuitem">{{i.title}}</a>
+                    <a href="{% url 'category_one' i.id %}" class="navigation-menu-link" role="menuitem">{{i.title}}</a>
                 </li>
                 {% endfor %}
                 <!-- <li class="navigation-menu-item" role="none">
@@ -2142,7 +2142,7 @@
         <div class="footer-newsletter-container">
             <div class="footer-newsletter-content">
                 <div class="footer-newsletter-text">
-                    <h1 class="section-title">Yangiliklar obunasi</h1>
+                    <h1 class="section-title">Yangiliklar</h1>
                     <h4 class="section-content" style="color:#fff;">Eng muhim yangiliklar va tahlillardan darhol
                         xabardor bo'ling</h4>
                 </div>

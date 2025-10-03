@@ -44,10 +44,12 @@ def all_category(request):
         "all_category":categorys,
         "categories_with_news":categories_with_news
     })
-def category_one(request,id):
-    category = Category.objects.get(id=id)
+def category_one(request,pk):
+    category = Category.objects.get(pk=pk)
+    all_categorys = Category.objects.all()  # queryset → list
+    categorys = random.sample(list(all_categorys), 8) 
     filtered_news = News.objects.filter(category=category)
-    return render(request,'filtered_news.html',{"filtered_news":filtered_news})
+    return render(request,'filtered_news.html',{"all_category":categorys,"category":category,"filtered_news":filtered_news})
 from django.http import JsonResponse
 def search_suggest(request):
     query = request.GET.get("q", "")
