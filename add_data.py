@@ -17,13 +17,13 @@ def save_news_from_json(json_file):
     with open(json_file, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    for item in data["data"]:
+    for item in data["news"]:
         title = item.get("title")
-        description = item.get("short_content")
-        image_path = item.get("img")  # masalan: 2025/10/02/xxxx.jpg
-        category_name = item.get("category") or "Sport"  # JSONdan olamiz
-        pub_date = item.get("date")  # 2025-10-02 10:11:53
-        views_count = random.randint(1542, 2415)
+        description = item.get("description")
+        image_path = item.get("image")  # masalan: 2025/10/02/xxxx.jpg
+        category_name = item.get("category_name")  # JSONdan olamiz
+        pub_date = item.get("pub_date")  # 2025-10-02 10:11:53
+        views_count = item.get("views_count")
 
         # 1️⃣ Category topiladi yoki yaratiladi
         category, _ = Category.objects.get_or_create(title=category_name)
@@ -32,9 +32,9 @@ def save_news_from_json(json_file):
         img_path = None
         if image_path:
             print(image_path)
-            image_url = BASE_URL + image_path
-            print(f"web sayt >>>>>>>>>>>>>{image_url}")
-            response = requests.get(image_url)
+            # image_url = BASE_URL + image_path
+            # print(f"web sayt >>>>>>>>>>>>>{image_url}")
+            response = requests.get(image_path)
             if response.status_code == 200:
                 filename = os.path.basename(image_path)  # faqat fayl nomi
                 folder_path = "media/news"

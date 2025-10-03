@@ -5,7 +5,7 @@ import requests
 
 def all_category(request):
     news = list(News.objects.all())
-    finally_news = News.objects.order_by('-created_at')[:15]
+    finally_news = News.objects.order_by('-created_at')[:22]
     random_news_1 = random.sample(news, 5) if len(news) >= 5 else news
     random_news_2 = random.sample(news, 12) if len(news) >= 5 else news
     categories_with_news = []
