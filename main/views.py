@@ -23,7 +23,7 @@ def all_category(request):
         phone = request.POST.get("phone")
         text = f"📩 Yangi murojaat:\n\n📝 Matn: {matn}\n📞 Telefon: {phone}"
         if not text:
-            return render(request,'home.html',{"status": "error", "message": "Text yozing avval!"})
+            return render(request,'hom_new.html',{"status": "error", "message": "Text yozing avval!"})
 
         url = f"https://api.telegram.org/bot8349177494:AAFdZh90_vpOSC3ZHagIcSSgpsNq7OvVZm4/sendMessage"
         payload = {
@@ -33,10 +33,10 @@ def all_category(request):
         response = requests.post(url, data=payload)
         print(response.status_code)
         if response.status_code == 200:
-            return render(request,'home.html',{"status": "ok", "message": "Yuborildi ✅"})
+            return render(request,'hom_new.html',{"status": "ok", "message": "Yuborildi ✅"})
         else:
-            return render(request,'home.html',{"status": "error", "message": "Xatolik ❌"})
-    return render(request,'home.html',{
+            return render(request,'hom_new.html',{"status": "error", "message": "Xatolik ❌"})
+    return render(request,'hom_new.html',{
         "news":News.objects.all(),
         "random_news":random_news_1,
         "famous":random_news_2,

@@ -1,3 +1,11 @@
+
+<!-- Responsive meta taglar -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<meta name="HandheldFriendly" content="true">
+<meta name="MobileOptimized" content="width">
+<meta name="theme-color" content="#0066cc">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <nav class="navigation-wrapper" id="main-navigation">
     <div class="navigation-container">
         <!-- Logo -->
@@ -559,6 +567,290 @@
             transition-duration: 0.01ms !important;
         }
     }
+
+    /* Navigation Responsive Styles */
+    @media (max-width: 991px) {
+        .navigation-search-desktop {
+            display: none;
+        }
+
+        .navigation-menu-desktop {
+            display: none;
+        }
+
+        .navigation-mobile-toggle {
+            display: flex;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .navigation-container {
+            padding: var(--spacing-sm) var(--spacing-md);
+        }
+
+        .navigation-logo-text {
+            display: none;
+        }
+
+        .navigation-logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .navigation-logo-symbol {
+            font-size: var(--font-size-md);
+        }
+    }
+
+    @media (max-width: 479px) {
+        .navigation-container {
+            gap: var(--spacing-md);
+        }
+
+        .navigation-mobile-content {
+            padding: var(--spacing-md);
+        }
+
+        .navigation-mobile-link {
+            font-size: var(--font-size-md);
+            padding: var(--spacing-md);
+        }
+    }
+
+    /* Hero Section Responsive */
+    @media (max-width: 991px) {
+        .hero-section {
+            height: 500px;
+        }
+
+        .hero-content {
+            left: 40px;
+            bottom: 80px;
+            max-width: 500px;
+        }
+
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .hero-section {
+            height: 400px;
+        }
+
+        .hero-content {
+            left: 20px;
+            bottom: 60px;
+            max-width: 90%;
+        }
+
+        .hero-title {
+            font-size: 1.8rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+
+        .hero-meta {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 479px) {
+        .hero-section {
+            height: 350px;
+        }
+
+        .hero-content {
+            left: 15px;
+            bottom: 50px;
+        }
+
+        .hero-title {
+            font-size: 1.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Main Layout Responsive */
+    @media (max-width: 991px) {
+        .main-layout {
+            grid-template-columns: 1fr;
+            gap: var(--spacing-2xl);
+        }
+
+        .sidebar {
+            position: static;
+            order: 1;
+        }
+
+        .main-content {
+            order: 2;
+        }
+
+        .featured-card {
+            grid-column: span 1;
+        }
+
+        .news-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .categories-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .stats-widget {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .main-layout {
+            padding: var(--spacing-xl) var(--spacing-md);
+        }
+
+        .news-grid {
+            grid-template-columns: 1fr;
+            gap: var(--spacing-lg);
+        }
+
+        .categories-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .news-card-content {
+            padding: var(--spacing-lg);
+        }
+
+        .section-title {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+    }
+
+    @media (max-width: 479px) {
+        .main-layout {
+            padding: var(--spacing-lg) var(--spacing-sm);
+        }
+
+        .news-card-image {
+            height: 150px;
+        }
+
+        .featured-card .news-card-image {
+            height: 200px;
+        }
+
+        .news-card-title {
+            font-size: var(--font-size-md);
+        }
+
+        .news-card-excerpt {
+            font-size: var(--font-size-sm);
+        }
+    }
+
+    /* Footer Responsive */
+    @media (max-width: 991px) {
+        .footer-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+        }
+
+        .footer-newsletter-content {
+            grid-template-columns: 1fr;
+            text-align: center;
+            gap: var(--spacing-xl);
+        }
+    }
+
+    @media (max-width: 767px) {
+        .footer-newsletter-section {
+            padding: var(--spacing-2xl) 0;
+        }
+
+        .footer-newsletter-content {
+            gap: var(--spacing-lg);
+        }
+
+        .footer-input-group {
+            flex-direction: column;
+        }
+
+        .footer-submit-btn {
+            justify-content: center;
+            border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+        }
+
+        .footer-main-content {
+            padding: var(--spacing-2xl) 0 var(--spacing-lg);
+        }
+
+        .footer-grid {
+            grid-template-columns: 1fr;
+            gap: var(--spacing-xl);
+        }
+
+        .footer-company-section {
+            max-width: none;
+            text-align: center;
+        }
+
+        .footer-logo {
+            justify-content: center;
+        }
+
+        .footer-social-links {
+            justify-content: center;
+        }
+
+        .footer-bottom-content {
+            flex-direction: column;
+            gap: var(--spacing-md);
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 479px) {
+
+        .footer-newsletter-container,
+        .footer-container {
+            padding: 0 var(--spacing-md);
+        }
+
+        .footer-newsletter-text h3 {
+            font-size: var(--font-size-lg);
+        }
+
+        .footer-input-group {
+            border-radius: var(--border-radius-md);
+        }
+
+        .footer-social-links {
+            flex-wrap: wrap;
+        }
+
+        .footer-copyright {
+            flex-direction: column;
+            gap: var(--spacing-sm);
+            text-align: center;
+        }
+    }
 </style>
 <script defer data-name="navigation">
     const mobileToggle = document.getElementById('mobile-menu-toggle');
@@ -613,6 +905,123 @@
         if (window.innerWidth > 991) {
             closeMobileMenu();
         }
+    });
+    // Responsive JavaScript funksiyalari
+    function handleResponsiveFeatures() {
+        // Viewport o'lchamini kuzatish
+        function checkViewport() {
+            const width = window.innerWidth;
+
+            // Mobile menu avtomatik yopish
+            if (width > 991) {
+                closeMobileMenu();
+            }
+
+            // Hero slider tezligini o'zgartirish
+            const heroInterval = width < 768 ? 6000 : 5000;
+            setupHeroSlider(heroInterval);
+        }
+
+        // Touch events for mobile
+        function setupTouchEvents() {
+            // Hero slider uchun touch events
+            const heroSlider = document.querySelector('.hero-slider');
+            if (heroSlider && 'ontouchstart' in window) {
+                let startX = 0;
+                let endX = 0;
+
+                heroSlider.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                });
+
+                heroSlider.addEventListener('touchend', (e) => {
+                    endX = e.changedTouches[0].clientX;
+                    handleSwipe(startX, endX);
+                });
+            }
+        }
+
+        function handleSwipe(startX, endX) {
+            const diff = startX - endX;
+            const threshold = 50;
+
+            if (Math.abs(diff) > threshold) {
+                if (diff > 0) {
+                    nextSlide(); // Swipe left
+                } else {
+                    prevSlide(); // Swipe right
+                }
+            }
+        }
+
+        // Image optimization for mobile
+        function optimizeImages() {
+            const images = document.querySelectorAll('img');
+            const isMobile = window.innerWidth < 768;
+
+            images.forEach(img => {
+                if (isMobile && img.dataset.mobileSrc) {
+                    img.src = img.dataset.mobileSrc;
+                } else if (!isMobile && img.dataset.desktopSrc) {
+                    img.src = img.dataset.desktopSrc;
+                }
+            });
+        }
+
+        // Initial setup
+        checkViewport();
+        setupTouchEvents();
+        optimizeImages();
+
+        // Event listeners
+        window.addEventListener('resize', checkViewport);
+        window.addEventListener('orientationchange', checkViewport);
+    }
+
+    // Mobile menu improvements
+    function enhanceMobileMenu() {
+        const mobileToggle = document.getElementById('mobile-menu-toggle');
+        const mobileOverlay = document.getElementById('mobile-navigation-overlay');
+
+        if (!mobileToggle || !mobileOverlay) return;
+
+        // Touch-friendly menu items
+        const menuItems = mobileOverlay.querySelectorAll('.navigation-mobile-link');
+        menuItems.forEach(item => {
+            item.style.minHeight = '44px';
+            item.style.padding = '12px 16px';
+        });
+
+        // Better touch handling
+        mobileOverlay.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+    }
+
+    // Performance optimizations for mobile
+    function optimizePerformance() {
+        const isMobile = window.innerWidth < 768;
+
+        if (isMobile) {
+            // Reduce animations on mobile
+            document.documentElement.style.setProperty('--animation-duration-slow', '300ms');
+            document.documentElement.style.setProperty('--animation-duration-standard', '200ms');
+
+            // Lazy load non-critical images
+            const lazyImages = document.querySelectorAll('.category-preview img, .popular-news-image img');
+            lazyImages.forEach(img => {
+                if (!img.loading) {
+                    img.loading = 'lazy';
+                }
+            });
+        }
+    }
+
+    // Initialize all responsive features
+    document.addEventListener('DOMContentLoaded', function () {
+        handleResponsiveFeatures();
+        enhanceMobileMenu();
+        optimizePerformance();
     });
 </script>
 <section class="hero-section">
