@@ -28,7 +28,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://news.dev-platform.uz',
 ]
 
-ALLOWED_HOSTS = ['https://news.dev-platform.uz',]
+ALLOWED_HOSTS = ['news.dev-platform.uz',]
 
 
 # Application definition
