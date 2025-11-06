@@ -24,8 +24,11 @@ SECRET_KEY = 'django-insecure-mk2b(7sapaes#5zs=l=o8j*)yx3-#3zp(zp9&iu+m#0x1p#u!#
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+CSRF_TRUSTED_ORIGINS = [
+    'https://news.dev-platform.uz',
+]
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['https://news.dev-platform.uz',]
 
 
 # Application definition

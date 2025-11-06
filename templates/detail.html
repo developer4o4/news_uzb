@@ -1,171 +1,24 @@
-<nav class="navigation-wrapper" id="main-navigation">
-    <div class="navigation-container">
-        <!-- Logo -->
-        <div class="navigation-logo">
-            <a href="#" class="navigation-logo-link" aria-label="Yangiliklar Hub bosh sahifa">
-                <div class="navigation-logo-content">
-                    <div class="navigation-logo-icon">
-                        <div class="navigation-logo-symbol">YH</div>
-                    </div>
-                    <a href="/">
-                        <div class="navigation-logo-text">
+
+    <!-- Navigation -->
+    <nav class="navigation-wrapper" id="main-navigation">
+        <div class="navigation-container">
+            <!-- Logo -->
+            <div class="navigation-logo">
+                <a href="#" class="navigation-logo-link" aria-label="Yangiliklar Hub bosh sahifa">
+                    <div class="navigation-logo-icon">YH</div>
+                    <div class="navigation-logo-text">
                         <span class="navigation-brand-name">Yangiliklar</span>
                         <span class="navigation-brand-sub">Hub</span>
                     </div>
-                    </a>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
 
-        <!-- Search Bar (Desktop) -->
-        <div class="navigation-search-desktop">
-            <form class="navigation-search-form" role="search" aria-label="Yangiliklar qidirish"
-                onsubmit="return false;">
-                <div class="navigation-search-wrapper">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        class="navigation-search-icon" aria-hidden="true">
-                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="2">
-                            <path d="m21 21l-4.34-4.34" />
-                            <circle cx="11" cy="11" r="8" />
-                        </g>
-                    </svg>
-
-                    <input type="search" id="searchInputDesktop" placeholder="Yangiliklarni qidiring..."
-                        class="navigation-search-input" autocomplete="off">
-                    <div id="suggestionsBoxDesktop" class="suggestions-box"></div>
-                </div>
-            </form>
-        </div>
-        <style>
-            .suggestions-box {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                background: #fff;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                width: 100%;
-                max-height: 220px;
-                overflow-y: auto;
-                z-index: 9999;
-                display: none;
-            }
-
-            .suggestion-item {
-                padding: 10px;
-                cursor: pointer;
-                border-bottom: 1px solid #eee;
-            }
-
-            .suggestion-item:hover {
-                background: #f5f5f5;
-            }
-        </style>
-
-        <!-- Desktop Navigation -->
-        <div class="navigation-menu-desktop">
-            <ul class="navigation-menu-list" role="menubar">
-                {% for i in all_category %}
-                <li class="navigation-menu-item" role="none">
-                    <a href="#" class="navigation-menu-link" role="menuitem">{{i.title}}</a>
-                </li>
-                {% endfor %}
-                <!-- <li class="navigation-menu-item" role="none">
-                    <a href="#" class="navigation-menu-link" role="menuitem">Jamiyat</a>
-                </li>
-                <li class="navigation-menu-item" role="none">
-                    <a href="#" class="navigation-menu-link" role="menuitem">Iqtisodiyot</a>
-                </li>
-                <li class="navigation-menu-item" role="none">
-                    <a href="#" class="navigation-menu-link" role="menuitem">Sport</a>
-                </li>
-                <li class="navigation-menu-item" role="none">
-                    <a href="#" class="navigation-menu-link" role="menuitem">Texnologiya</a>
-                </li>
-                <li class="navigation-menu-item" role="none">
-                    <a href="#" class="navigation-menu-link" role="menuitem">Madaniyat</a>
-                </li>
-                <li class="navigation-menu-item" role="none">
-                    <a href="#" class="navigation-menu-link" role="menuitem">Aloqa</a>
-                </li> -->
-            </ul>
-        </div>
-
-        <!-- Mobile Menu Toggle -->
-        <button class="navigation-mobile-toggle" id="mobile-menu-toggle" aria-label="Menyuni ochish"
-            aria-expanded="false">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                class="navigation-toggle-icon navigation-menu-icon" aria-hidden="true">
-                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M4 5h16M4 12h16M4 19h16" />
-            </svg>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                class="navigation-toggle-icon navigation-close-icon" aria-hidden="true">
-                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M18 6L6 18M6 6l12 12" />
-            </svg>
-        </button>
-    </div>
-    <script>
-        function setupLiveSearch(inputId, boxId) {
-            const input = document.getElementById(inputId);
-            const suggestionsBox = document.getElementById(boxId);
-
-            if (!input) return;
-
-            input.addEventListener("keyup", function () {
-                let query = this.value.trim();
-                if (query.length < 2) {
-                    suggestionsBox.style.display = "none";
-                    return;
-                }
-
-                fetch(`/search-suggest/?q=${query}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        suggestionsBox.innerHTML = "";
-                        if (data.results.length > 0) {
-                            data.results.forEach(item => {
-                                let div = document.createElement("div");
-                                div.classList.add("suggestion-item");
-                                div.textContent = item.title;
-                                div.addEventListener("click", () => {
-                                    window.location.href = item.url;
-                                });
-                                suggestionsBox.appendChild(div);
-                            });
-                            suggestionsBox.style.display = "block";
-                        } else {
-                            suggestionsBox.style.display = "none";
-                        }
-                    });
-            });
-
-            // tashqariga bosilganda yopilsin
-            document.addEventListener("click", function (e) {
-                if (!e.target.closest(`#${inputId}`) && !e.target.closest(`#${boxId}`)) {
-                    suggestionsBox.style.display = "none";
-                }
-            });
-        }
-
-        // desktop va mobile uchun chaqiramiz
-        document.addEventListener("DOMContentLoaded", function () {
-            setupLiveSearch("searchInputDesktop", "suggestionsBoxDesktop");
-            setupLiveSearch("searchInputMobile", "suggestionsBoxMobile");
-        });
-    </script>
-
-    <!-- Mobile Navigation Overlay -->
-    <div class="navigation-mobile-overlay" id="mobile-navigation-overlay">
-        <div class="navigation-mobile-content">
-            <!-- Mobile Search -->
-            <div class="navigation-search-mobile">
+            <!-- Desktop Search -->
+            <div class="navigation-search-desktop">
                 <form class="navigation-search-form" role="search" aria-label="Yangiliklar qidirish"
                     onsubmit="return false;">
                     <div class="navigation-search-wrapper">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                             class="navigation-search-icon" aria-hidden="true">
                             <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                 stroke-width="2">
@@ -173,25 +26,76 @@
                                 <circle cx="11" cy="11" r="8" />
                             </g>
                         </svg>
-                        <input type="search" id="searchInputMobile" placeholder="Yangiliklarni qidiring..."
+                        <input type="search" id="searchInputDesktop" placeholder="Yangiliklarni qidiring..."
                             class="navigation-search-input" autocomplete="off">
-                        <div id="suggestionsBoxMobile" class="suggestions-box"></div>
+                        <div id="suggestionsBoxDesktop" class="suggestions-box"></div>
                     </div>
                 </form>
             </div>
 
-            <!-- Mobile Menu -->
-            <ul class="navigation-mobile-menu" role="menu">
-                {% for i in all_category %}
-                <li class="navigation-mobile-item" role="none">
-                    <a href="#" class="navigation-mobile-link" role="menuitem">{{ i.title }}</a>
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
+            <!-- Desktop Navigation -->
+            <div class="navigation-menu-desktop">
+                <ul class="navigation-menu-list" role="menubar">
+                    {% for i in all_category %}
+                    <li class="navigation-menu-item" role="none">
+                        <a href="{% url 'category_one' i.id %}" class="navigation-menu-link"
+                            role="menuitem">{{i.title}}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
 
-</nav>
+            <!-- Mobile Menu Toggle -->
+            <button class="navigation-mobile-toggle" id="mobile-menu-toggle" aria-label="Menyuni ochish"
+                aria-expanded="false">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    class="navigation-toggle-icon navigation-menu-icon" aria-hidden="true">
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" d="M4 5h16M4 12h16M4 19h16" />
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    class="navigation-toggle-icon navigation-close-icon" aria-hidden="true">
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" d="M18 6L6 18M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Navigation Overlay -->
+        <div class="navigation-mobile-overlay" id="mobile-navigation-overlay">
+            <div class="navigation-mobile-content">
+                <!-- Mobile Search -->
+                <div class="navigation-search-mobile">
+                    <form class="navigation-search-form" role="search" aria-label="Yangiliklar qidirish"
+                        onsubmit="return false;">
+                        <div class="navigation-search-wrapper">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                class="navigation-search-icon" aria-hidden="true">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2">
+                                    <path d="m21 21l-4.34-4.34" />
+                                    <circle cx="11" cy="11" r="8" />
+                                </g>
+                            </svg>
+                            <input type="search" id="searchInputMobile" placeholder="Yangiliklarni qidiring..."
+                                class="navigation-search-input" autocomplete="off">
+                            <div id="suggestionsBoxMobile" class="suggestions-box"></div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Mobile Menu -->
+                <ul class="navigation-mobile-menu" role="menu">
+                    {% for i in all_category %}
+                    <li class="navigation-mobile-item" role="none">
+                        <a href="{% url 'category_one' i.id %}" class="navigation-mobile-link"
+                            role="menuitem">{{i.title}}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </nav>
 <style>
     /* Navigation Wrapper */
     .navigation-wrapper {
@@ -2115,325 +2019,6 @@
 }
 </style>
 
-<footer class="footer">
-    <!-- Newsletter Section with curved divider -->
-    <div class="footer-newsletter-section">
-        <div class="footer-curved-divider">
-            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M0,0 C150,120 350,120 600,60 C850,0 1050,0 1200,60 L1200,120 L0,120 Z"></path>
-            </svg>
-        </div>
-        <div class="footer-newsletter-container">
-            <div class="footer-newsletter-content">
-                <div class="footer-newsletter-text">
-                    <h1 class="section-title">Yangiliklar</h1>
-                    <h4 class="section-content" style="color:#fff;">Eng muhim yangiliklar va tahlillardan darhol
-                        xabardor bo'ling</h4>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Footer Content -->
-    <div class="footer-main-content">
-        <div class="footer-container">
-            <div class="footer-grid">
-                <!-- Company Info -->
-                <div class="footer-company-section">
-                    <div class="footer-logo">
-                        <div class="footer-logo-icon">
-                            <div class="footer-logo-circle"></div>
-                            <div class="footer-logo-text">YH</div>
-                        </div>
-                        <span class="footer-logo-name">Yangiliklar Hub</span>
-                    </div>
-                    <p class="footer-description">O'zbekistonning eng ishonchli yangiliklar manbai. Professional
-                        jurnalistika va obyektiv xabar berish.</p>
-
-                    <!-- Social Media -->
-                    <div class="footer-social-section">
-                        <h4 class="footer-social-title">Ijtimoiy tarmoqlar</h4>
-                        <div class="footer-social-links">
-
-                            <p>Telegram orqali bizni kuzating</p>
-                            <a href="#" class="footer-social-link" aria-label="Telegram">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
-                                        stroke-linejoin="round" stroke-width="2"
-                                        d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11zm7.318-19.539l-10.94 10.939" />
-                                </svg>
-
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Links -->
-                <div class="footer-links-section">
-                    <h4 class="footer-section-title">Tezkor havolalar</h4>
-                    <nav class="footer-links">
-                        <a href="#" class="footer-link">Bosh sahifa</a>
-                        <a href="#" class="footer-link">Siyosat</a>
-                        <a href="#" class="footer-link">Jamiyat</a>
-                        <a href="#" class="footer-link">Iqtisodiyot</a>
-                        <a href="#" class="footer-link">Sport</a>
-                        <a href="#" class="footer-link">Texnologiya</a>
-                    </nav>
-                </div>
-
-                <!-- Legal Links -->
-                <div class="footer-legal-section">
-                    <h4 class="footer-section-title">Ma'lumot</h4>
-                    <nav class="footer-links">
-                        <a href="#" class="footer-link">Biz haqimizda</a>
-                        <a href="#" class="footer-link">Maxfiylik siyosati</a>
-                        <a href="#" class="footer-link">Foydalanish shartlari</a>
-                        <a href="#" class="footer-link">Reklama</a>
-                        <a href="#" class="footer-link">Vakansiyalar</a>
-                        <a href="#" class="footer-link">Aloqa</a>
-                    </nav>
-                </div>
-
-                <!-- Contact Info -->
-                <div class="footer-contact-section">
-                    <h4 class="footer-section-title">Bog‘lanish</h4>
-                    <form id="contactForm" method="post" action="{% url 'send_message' %}"
-                        class="footer-newsletter-form">
-                        {% csrf_token %}
-                        <div class="footer-input-group">
-                            <div class="footer-input-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
-                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2">
-                                        <path d="m22 7l-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
-                                        <rect width="20" height="16" x="2" y="4" rx="2" />
-                                    </g>
-                                </svg>
-                            </div>
-                            <input type="text" name="message" placeholder="Murojaat matnini kiriting..."
-                                class="footer-input" required />
-                        </div>
-
-                        <div class="footer-input-group">
-                            <div class="footer-input-icon">
-                                📞
-                            </div>
-                            <input type="tel" id="phone" name="phone" placeholder="+998 XX XXX XX XX"
-                                class="footer-input" maxlength="17" required />
-
-                        </div>
-
-                        <button type="submit" class="btn btn-primary footer-submit-btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11zm7.318-19.539l-10.94 10.939" />
-                            </svg>
-                            <span>Yuborish</span>
-                        </button>
-                    </form>
-                </div>
-                <script>
-                    document.getElementById("contactForm").addEventListener("submit", function (e) {
-                        e.preventDefault(); // formani to‘g‘ridan-to‘g‘ri yubormaydi
-
-                        let formData = new FormData(this);
-
-                        fetch("{% url 'send_message' %}", {
-                            method: "POST",
-                            body: formData,
-                            headers: {
-                                "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
-                            }
-                        })
-                            .then(res => res.json())
-                            .then(data => {
-                                alert(data.message);
-                            });
-                    });
-
-                    document.getElementById("phone").addEventListener("input", function (e) {
-                        let value = e.target.value.replace(/\D/g, ""); // faqat raqamlarni qoldiramiz
-                        if (!value.startsWith("998")) {
-                            value = "998" + value; // avtomatik 998 qo‘shiladi
-                        }
-
-                        // Formatlash: +998 XX XXX XX XX
-                        let formatted = "+";
-                        if (value.length > 0) formatted += value.substring(0, 3);
-                        if (value.length > 3) formatted += " " + value.substring(3, 5);
-                        if (value.length > 5) formatted += " " + value.substring(5, 8);
-                        if (value.length > 8) formatted += " " + value.substring(8, 10);
-                        if (value.length > 10) formatted += " " + value.substring(10, 12);
-
-                        e.target.value = formatted;
-                    });
-                </script>
-
-                <style>
-                    .footer-contact-section {
-                        margin-top: 25px;
-                    }
-
-                    .footer-section-title {
-                        font-size: 18px;
-                        font-weight: bold;
-                        margin-bottom: 15px;
-                        color: #fff;
-                    }
-
-                    .footer-newsletter-form {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 12px;
-                    }
-
-                    .footer-input-group {
-                        display: flex;
-                        align-items: center;
-                        background: #2b2b2b;
-                        border: 1px solid #444;
-                        border-radius: 6px;
-                        padding: 8px 12px;
-                    }
-
-                    .footer-input-icon {
-                        margin-right: 8px;
-                        color: #aaa;
-                        font-size: 18px;
-                        display: flex;
-                        align-items: center;
-                    }
-
-                    .footer-input {
-                        flex: 1;
-                        border: none;
-                        outline: none;
-                        background: transparent;
-                        color: #000;
-                        font-size: 14px;
-                        padding: 8px 0;
-                    }
-
-                    .footer-submit-btn {
-                        margin-top: 8px;
-                        padding: 12px;
-                        border: none;
-                        border-radius: 6px;
-                        background: #007bff;
-                        color: #ffd;
-                        font-size: 15px;
-                        cursor: pointer;
-                        display: flex;
-                        align-items: center;
-                        gap: 6px;
-                        justify-content: center;
-                        transition: background 0.3s;
-                    }
-
-                    .footer-submit-btn:hover {
-                        background: #0056b3;
-                    }
-                </style>
-
-                <!-- Popup Modal -->
-                <div id="popupMessage" class="popup-message">
-                    <div class="popup-content">
-                        <span id="popupText"></span>
-                    </div>
-                </div>
-
-                <script>
-                    document.getElementById("contactForm").addEventListener("submit", function (e) {
-                        e.preventDefault();
-
-                        let input = this.querySelector("input[name='message']");
-                        let message = input.value.trim();
-
-                        if (message) {
-                            // Serverga yuborilgan deb tasavvur qilamiz
-                            showPopup("✅ Murojaat yuborildi!");
-                            input.value = "";
-                        } else {
-                            showPopup("❌ Xatolik: matn kiritilmadi!");
-                        }
-                    });
-
-                    function showPopup(text) {
-                        let popup = document.getElementById("popupMessage");
-                        let popupText = document.getElementById("popupText");
-                        popupText.innerText = text;
-                        popup.classList.add("show");
-
-                        setTimeout(() => {
-                            popup.classList.remove("show");
-                        }, 3000); // 3 soniyadan keyin yopiladi
-                    }
-                </script>
-
-
-                <!-- <div class="footer-contact-info">
-                        <div class="footer-contact-item">
-                            <div class="footer-contact-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
-                                        stroke-linejoin="round" stroke-width="2"
-                                        d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233a14 14 0 0 0 6.392 6.384" />
-                                </svg>
-                            </div>
-                            <span>+998 95 702 10 12</span>
-                        </div>
-                        <div class="footer-contact-item">
-                            <div class="footer-contact-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2">
-                                        <path d="m22 7l-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
-                                        <rect width="20" height="16" x="2" y="4" rx="2" />
-                                    </g>
-                                </svg>
-                            </div>
-                            <span>info@yangiliklarHub.uz</span>
-                        </div>
-                        <div class="footer-contact-item">
-                            <div class="footer-contact-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
-                                        stroke-linejoin="round" stroke-width="2"
-                                        d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0zm.894.211v15M9 3.236v15" />
-                                </svg>
-                            </div>
-                            <span>Toshkent sh., Chilonzor t., A.Qodiriy ko'chasi 12A</span>
-                        </div>
-                    </div> -->
-            </div>
-        </div>
-    </div>
-    </div>
-
-    <!-- Bottom Bar -->
-    <div class="footer-bottom">
-        <div class="footer-container">
-            <div class="footer-bottom-content">
-                <div class="footer-copyright">
-                    <span>© 2025 Yangiliklar Hub. Barcha huquqlar himoyalangan.</span>
-                    <div class="footer-uzbekistan-flag">
-                        <div class="footer-flag-stripe footer-flag-blue"></div>
-                        <div class="footer-flag-stripe footer-flag-white"></div>
-                        <div class="footer-flag-stripe footer-flag-green"></div>
-                    </div>
-                </div>
-                <button class="footer-scroll-top" id="footerScrollTop" aria-label="Sahifa boshiga o'tish">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="2" d="m5 12l7-7l7 7m-7 7V5" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-</footer>
 <style>
     .footer {
         background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-elevated) 100%);
@@ -2970,4 +2555,1769 @@
     });
 </script>
 
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="MobileOptimized" content="width">
+    <meta name="theme-color" content="#0066cc">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Yangiliklar Hub - Bosh sahifa</title>
+    <style>
+        /* === DESIGN SYSTEM === */
+        :root {
+            /* Colors */
+            --color-primary: #0066cc;
+            --color-secondary: #004999;
+            --color-accent: #ff6b35;
+            --color-surface: #ffffff;
+            --color-surface-elevated: #f9fafb;
+            --color-on-surface: #111827;
+            --color-on-surface-secondary: #6b7280;
+            --color-on-primary: #ffffff;
+            --color-border: #e5e7eb;
+            --color-scrim: rgba(0, 0, 0, 0.6);
+
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            --spacing-3xl: 4rem;
+
+            /* Typography */
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-md: 1rem;
+            --font-size-lg: 1.25rem;
+            --font-size-xl: 1.5rem;
+            --font-size-2xl: 2rem;
+            --font-weight-regular: 400;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 600;
+            --font-weight-bold: 700;
+
+            /* Border Radius */
+            --border-radius-sm: 0.25rem;
+            --border-radius-md: 0.5rem;
+            --border-radius-lg: 0.75rem;
+            --border-radius-xl: 1rem;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+            /* Layout */
+            --content-max-width: 1200px;
+            --section-gap: 3rem;
+        }
+
+        /* === BASE STYLES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            font-size: var(--font-size-md);
+            line-height: 1.6;
+            color: var(--color-on-surface);
+            background-color: var(--color-surface);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+        }
+
+        /* === HEADER & NAVIGATION === */
+        .navigation-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            backdrop-filter: blur(12px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .navigation-container {
+            max-width: var(--content-max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-md) var(--spacing-lg);
+            gap: var(--spacing-lg);
+        }
+
+        /* Logo */
+        .navigation-logo-link {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            transition: transform 0.2s ease;
+        }
+
+        .navigation-logo-link:hover {
+            transform: scale(1.02);
+        }
+
+        .navigation-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            border-radius: var(--border-radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-on-primary);
+            font-weight: var(--font-weight-bold);
+            font-size: var(--font-size-md);
+        }
+
+        .navigation-logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navigation-brand-name {
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-on-surface);
+            line-height: 1.2;
+        }
+
+        .navigation-brand-sub {
+            font-size: var(--font-size-sm);
+            color: var(--color-on-surface-secondary);
+            line-height: 1.2;
+        }
+
+        /* Desktop Search */
+        .navigation-search-desktop {
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .navigation-search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: var(--color-surface-elevated);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-lg);
+            transition: all 0.2s ease;
+        }
+
+        .navigation-search-wrapper:focus-within {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .navigation-search-icon {
+            position: absolute;
+            left: var(--spacing-md);
+            color: var(--color-on-surface-secondary);
+        }
+
+        .navigation-search-input {
+            flex: 1;
+            padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) calc(var(--spacing-md) * 3);
+            border: none;
+            background: transparent;
+            color: var(--color-on-surface);
+            font-size: var(--font-size-md);
+            outline: none;
+            width: 100%;
+        }
+
+        .navigation-search-input::placeholder {
+            color: var(--color-on-surface-secondary);
+        }
+
+        /* Desktop Menu */
+        .navigation-menu-desktop {
+            display: flex;
+        }
+
+        .navigation-menu-list {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            list-style: none;
+        }
+
+        .navigation-menu-link {
+            display: block;
+            padding: var(--spacing-sm) var(--spacing-md);
+            color: var(--color-on-surface);
+            font-weight: var(--font-weight-medium);
+            border-radius: var(--border-radius-md);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .navigation-menu-link:hover {
+            background: var(--color-surface-elevated);
+            color: var(--color-primary);
+        }
+
+        /* Mobile Toggle */
+        .navigation-mobile-toggle {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: transparent;
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            color: var(--color-on-surface);
+            transition: all 0.2s ease;
+        }
+
+        .navigation-mobile-toggle:hover {
+            background: var(--color-surface-elevated);
+            border-color: var(--color-primary);
+        }
+
+        .navigation-toggle-icon {
+            transition: all 0.2s ease;
+        }
+
+        .navigation-close-icon {
+            opacity: 0;
+            position: absolute;
+        }
+
+        .navigation-mobile-toggle[aria-expanded="true"] .navigation-menu-icon {
+            opacity: 0;
+        }
+
+        .navigation-mobile-toggle[aria-expanded="true"] .navigation-close-icon {
+            opacity: 1;
+        }
+
+        /* Mobile Overlay */
+        .navigation-mobile-overlay {
+            position: fixed;
+            top: 100%;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--color-surface) !important;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            z-index: 999;
+            border-top: 1px solid var(--color-border);
+            overflow-y: auto;
+        }
+
+        .navigation-mobile-overlay.navigation-active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            top: 70px;
+        }
+
+        .navigation-mobile-content {
+            padding: var(--spacing-xl);
+            background: var(--color-surface) !important;
+        }
+
+        /* Mobile Search */
+        .navigation-search-mobile {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .navigation-search-mobile .navigation-search-wrapper {
+            border-radius: var(--border-radius-md);
+        }
+
+        /* Mobile Menu */
+        .navigation-mobile-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .navigation-mobile-link {
+            display: block;
+            padding: var(--spacing-md) var(--spacing-lg);
+            color: var(--color-on-surface) !important;
+            font-weight: var(--font-weight-medium);
+            border-radius: var(--border-radius-md);
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+            font-size: var(--font-size-lg);
+            background: var(--color-surface) !important;
+        }
+
+        .navigation-mobile-link:hover {
+            background: var(--color-surface-elevated) !important;
+            border-color: var(--color-border);
+            color: var(--color-primary) !important;
+            transform: translateX(8px);
+        }
+
+        /* Suggestions Box */
+        .suggestions-box {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--color-surface) !important;
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1001;
+            display: none;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .suggestion-item {
+            padding: var(--spacing-md);
+            cursor: pointer;
+            border-bottom: 1px solid var(--color-border);
+            transition: background-color 0.2s ease;
+            color: var(--color-on-surface) !important;
+            background: var(--color-surface) !important;
+        }
+
+        .suggestion-item:hover {
+            background: var(--color-surface-elevated) !important;
+            color: var(--color-primary) !important;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        /* === HERO SECTION === */
+        .hero-section {
+            position: relative;
+            height: 600px;
+            overflow: hidden;
+        }
+
+        .hero-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-content {
+            position: absolute;
+            bottom: var(--spacing-2xl);
+            left: var(--spacing-2xl);
+            color: var(--color-on-primary);
+            max-width: 600px;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.2;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-subtitle {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.4;
+            opacity: 0.9;
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            font-size: var(--font-size-sm);
+            opacity: 0.8;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: var(--color-primary);
+            color: var(--color-on-primary);
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: var(--color-secondary);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--color-primary);
+            border: 1px solid var(--color-primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--color-primary);
+            color: var(--color-on-primary);
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-layout {
+            max-width: var(--content-max-width);
+            margin: 0 auto;
+            padding: var(--section-gap) var(--spacing-lg);
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: var(--spacing-2xl);
+            align-items: start;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--section-gap);
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-on-surface);
+            margin-bottom: var(--spacing-xl);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--color-primary);
+            border-radius: var(--border-radius-full);
+        }
+
+        /* News Grid */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-xl);
+        }
+
+        .news-card {
+            background: var(--color-surface);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid var(--color-border);
+        }
+
+        .news-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .featured-card {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        .news-card-image {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .featured-card .news-card-image {
+            height: 300px;
+        }
+
+        .news-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .news-card:hover .news-card-image img {
+            transform: scale(1.05);
+        }
+
+        .news-category {
+            position: absolute;
+            top: var(--spacing-md);
+            left: var(--spacing-md);
+            padding: var(--spacing-xs) var(--spacing-md);
+            background: var(--color-accent);
+            color: var(--color-on-primary);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-medium);
+            border-radius: var(--border-radius-full);
+            text-transform: uppercase;
+        }
+
+        .news-card-content {
+            padding: var(--spacing-xl);
+        }
+
+        .featured-card .news-card-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .news-card-title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-on-surface);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.3;
+        }
+
+        .featured-card .news-card-title {
+            font-size: var(--font-size-xl);
+        }
+
+        .news-card-excerpt {
+            color: var(--color-on-surface-secondary);
+            line-height: 1.6;
+            margin-bottom: var(--spacing-lg);
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .news-card-meta {
+            display: flex;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            font-size: var(--font-size-sm);
+            color: var(--color-on-surface-secondary);
+        }
+
+        .news-card-btn {
+            align-self: flex-start;
+            margin-top: auto;
+        }
+
+        /* Categories Grid */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .category-card {
+            background: var(--color-surface-elevated);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--color-primary);
+        }
+
+        .category-card-header {
+            padding: var(--spacing-lg);
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: var(--color-on-primary);
+        }
+
+        .category-title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            margin: 0;
+        }
+
+        .category-preview {
+            position: relative;
+            height: 150px;
+            overflow: hidden;
+        }
+
+        .category-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .category-img.active {
+            opacity: 1;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-section {
+            background: var(--color-surface-elevated);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .sidebar-title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-on-surface);
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--color-primary);
+        }
+
+        .popular-news-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+
+        .popular-news-item {
+            display: flex;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-md);
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .popular-news-item:hover {
+            background: var(--color-surface);
+        }
+
+        .popular-news-image {
+            width: 80px;
+            height: 60px;
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .popular-news-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .popular-news-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .popular-news-title {
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            color: var(--color-on-surface);
+            margin-bottom: var(--spacing-xs);
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .popular-news-meta {
+            font-size: var(--font-size-xs);
+            color: var(--color-on-surface-secondary);
+        }
+
+        /* === FOOTER === */
+        .footer {
+            background: linear-gradient(135deg, var(--color-surface-elevated), var(--color-surface));
+            border-top: 1px solid var(--color-border);
+            margin-top: var(--section-gap);
+        }
+
+        .footer-newsletter-section {
+            background: var(--color-primary);
+            color: var(--color-on-primary);
+            padding: var(--spacing-3xl) 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-curved-divider {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+        }
+
+        .footer-curved-divider svg {
+            width: calc(100% + 1.3px);
+            height: 80px;
+            fill: var(--color-surface);
+        }
+
+        .footer-newsletter-container {
+            max-width: var(--content-max-width);
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg);
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-newsletter-content {
+            text-align: center;
+        }
+
+        .footer-newsletter-text h1 {
+            font-size: var(--font-size-2xl);
+            margin-bottom: var(--spacing-md);
+            color: var(--color-on-primary);
+        }
+
+        .footer-newsletter-text h4 {
+            font-size: var(--font-size-lg);
+            opacity: 0.9;
+            font-weight: var(--font-weight-regular);
+        }
+
+        .footer-main-content {
+            padding: var(--spacing-3xl) 0;
+        }
+
+        .footer-container {
+            max-width: var(--content-max-width);
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: var(--spacing-2xl);
+        }
+
+        .footer-company-section {
+            max-width: 400px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .footer-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--color-primary);
+            border-radius: var(--border-radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-on-primary);
+            font-weight: var(--font-weight-bold);
+        }
+
+        .footer-logo-name {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-on-surface);
+        }
+
+        .footer-description {
+            color: var(--color-on-surface-secondary);
+            line-height: 1.6;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .footer-social-section {
+            margin-top: var(--spacing-xl);
+        }
+
+        .footer-social-title {
+            font-size: var(--font-size-md);
+            font-weight: var(--font-weight-medium);
+            color: var(--color-on-surface);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .footer-social-links {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .footer-social-link {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--color-primary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-social-link:hover {
+            color: var(--color-secondary);
+        }
+
+        .footer-section-title {
+            font-size: var(--font-size-md);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-on-surface);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .footer-link {
+            color: var(--color-on-surface-secondary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--color-primary);
+        }
+
+        .footer-contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .footer-input-group {
+            display: flex;
+            align-items: center;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-sm) var(--spacing-md);
+        }
+
+        .footer-input-icon {
+            margin-right: var(--spacing-sm);
+            color: var(--color-on-surface-secondary);
+        }
+
+        .footer-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: var(--color-on-surface);
+            font-size: var(--font-size-md);
+        }
+
+        .footer-input::placeholder {
+            color: var(--color-on-surface-secondary);
+        }
+
+        .footer-submit-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md);
+            background: var(--color-primary);
+            color: var(--color-on-primary);
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .footer-submit-btn:hover {
+            background: var(--color-secondary);
+        }
+
+        .footer-bottom {
+            background: var(--color-surface-elevated);
+            padding: var(--spacing-lg) 0;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .footer-bottom-content {
+            max-width: var(--content-max-width);
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .footer-copyright {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            color: var(--color-on-surface-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .footer-uzbekistan-flag {
+            display: flex;
+            flex-direction: column;
+            width: 24px;
+            height: 16px;
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .footer-flag-stripe {
+            flex: 1;
+        }
+
+        .footer-flag-blue {
+            background: #0099cc;
+        }
+
+        .footer-flag-white {
+            background: #ffffff;
+        }
+
+        .footer-flag-green {
+            background: #00cc66;
+        }
+
+        .footer-scroll-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: var(--color-primary);
+            color: var(--color-on-primary);
+            border: none;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .footer-scroll-top:hover {
+            background: var(--color-secondary);
+            transform: translateY(-2px);
+        }
+
+        /* Popup Message */
+        .popup-message {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--border-radius-md);
+            z-index: 10000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .popup-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* === RESPONSIVE DESIGN === */
+        @media (max-width: 991px) {
+
+            /* Navigation */
+            .navigation-search-desktop {
+                display: none;
+            }
+
+            .navigation-menu-desktop {
+                display: none;
+            }
+
+            .navigation-mobile-toggle {
+                display: flex;
+            }
+
+            /* Hero */
+            .hero-section {
+                height: 500px;
+            }
+
+            .hero-content {
+                left: var(--spacing-xl);
+                bottom: var(--spacing-xl);
+            }
+
+            .hero-title {
+                font-size: var(--font-size-xl);
+            }
+
+            .hero-subtitle {
+                font-size: var(--font-size-md);
+            }
+
+            /* Main Layout */
+            .main-layout {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-xl);
+            }
+
+            .sidebar {
+                position: static;
+                order: -1;
+            }
+
+            .featured-card {
+                grid-template-columns: 1fr;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            /* Footer */
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: var(--spacing-xl);
+            }
+        }
+
+        @media (max-width: 767px) {
+
+            /* Navigation */
+            .navigation-container {
+                padding: var(--spacing-sm) var(--spacing-md);
+            }
+
+            .navigation-logo-text {
+                display: none;
+            }
+
+            .navigation-mobile-overlay.navigation-active {
+                top: 60px;
+            }
+
+            .navigation-mobile-content {
+                padding: var(--spacing-lg);
+            }
+
+            .navigation-mobile-link {
+                font-size: var(--font-size-md);
+                padding: var(--spacing-md);
+            }
+
+            /* Hero */
+            .hero-section {
+                height: 400px;
+            }
+
+            .hero-content {
+                left: var(--spacing-lg);
+                bottom: var(--spacing-lg);
+                max-width: 90%;
+            }
+
+            .hero-title {
+                font-size: var(--font-size-lg);
+            }
+
+            .hero-subtitle {
+                font-size: var(--font-size-sm);
+            }
+
+            .hero-meta {
+                font-size: var(--font-size-xs);
+            }
+
+            /* Main Content */
+            .main-layout {
+                padding: var(--spacing-xl) var(--spacing-md);
+            }
+
+            .section-title {
+                font-size: var(--font-size-lg);
+            }
+
+            .news-card-content {
+                padding: var(--spacing-lg);
+            }
+
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Footer */
+            .footer-newsletter-section {
+                padding: var(--spacing-2xl) 0;
+            }
+
+            .footer-newsletter-text h1 {
+                font-size: var(--font-size-xl);
+            }
+
+            .footer-newsletter-text h4 {
+                font-size: var(--font-size-md);
+            }
+
+            .footer-main-content {
+                padding: var(--spacing-2xl) 0;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-xl);
+            }
+
+            .footer-company-section {
+                max-width: none;
+                text-align: center;
+            }
+
+            .footer-logo {
+                justify-content: center;
+            }
+
+            .footer-social-links {
+                align-items: center;
+            }
+
+            .footer-bottom-content {
+                flex-direction: column;
+                gap: var(--spacing-md);
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 479px) {
+
+            /* Navigation */
+            .navigation-container {
+                gap: var(--spacing-md);
+            }
+
+            .navigation-logo-icon {
+                width: 36px;
+                height: 36px;
+                font-size: var(--font-size-sm);
+            }
+
+            /* Hero */
+            .hero-section {
+                height: 350px;
+            }
+
+            .hero-content {
+                left: var(--spacing-md);
+                bottom: var(--spacing-md);
+            }
+
+            .hero-title {
+                font-size: var(--font-size-md);
+            }
+
+            .btn {
+                padding: var(--spacing-sm) var(--spacing-md);
+                font-size: var(--font-size-sm);
+            }
+
+            /* Main Content */
+            .main-layout {
+                padding: var(--spacing-lg) var(--spacing-sm);
+            }
+
+            .news-card-image {
+                height: 150px;
+            }
+
+            .featured-card .news-card-image {
+                height: 200px;
+            }
+
+            .news-card-title {
+                font-size: var(--font-size-md);
+            }
+
+            .sidebar-section {
+                padding: var(--spacing-lg);
+            }
+
+            /* Footer */
+            .footer-newsletter-container,
+            .footer-container {
+                padding: 0 var(--spacing-md);
+            }
+
+            .footer-input-group {
+                padding: var(--spacing-xs) var(--spacing-md);
+            }
+
+            .popup-message {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+            }
+        }
+
+        /* Reduced motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <!-- Newsletter Section -->
+        <div class="footer-newsletter-section">
+            <div class="footer-curved-divider">
+                <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M0,0 C150,120 350,120 600,60 C850,0 1050,0 1200,60 L1200,120 L0,120 Z"></path>
+                </svg>
+            </div>
+            <div class="footer-newsletter-container">
+                <div class="footer-newsletter-content">
+                    <div class="footer-newsletter-text">
+                        <h1>Yangiliklar</h1>
+                        <h4>Eng muhim yangiliklar va tahlillardan darhol xabardor bo'ling</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Footer Content -->
+        <div class="footer-main-content">
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <!-- Company Info -->
+                    <div class="footer-company-section">
+                        <div class="footer-logo">
+                            <div class="footer-logo-icon">YH</div>
+                            <span class="footer-logo-name">Yangiliklar Hub</span>
+                        </div>
+                        <p class="footer-description">O'zbekistonning eng ishonchli yangiliklar manbai. Professional
+                            jurnalistika va obyektiv xabar berish.</p>
+
+                        <!-- Social Media -->
+                        <div class="footer-social-section">
+                            <h4 class="footer-social-title">Ijtimoiy tarmoqlar</h4>
+                            <div class="footer-social-links">
+                                <p>Telegram orqali bizni kuzating</p>
+                                <a href="#" class="footer-social-link" aria-label="Telegram">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                        <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                            stroke-linejoin="round" stroke-width="2"
+                                            d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11zm7.318-19.539l-10.94 10.939" />
+                                    </svg>
+                                    <span>Telegram kanal</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="footer-links-section">
+                        <h4 class="footer-section-title">Tezkor havolalar</h4>
+                        <nav class="footer-links">
+                            <a href="#" class="footer-link">Bosh sahifa</a>
+                            <a href="#" class="footer-link">Siyosat</a>
+                            <a href="#" class="footer-link">Jamiyat</a>
+                            <a href="#" class="footer-link">Iqtisodiyot</a>
+                            <a href="#" class="footer-link">Sport</a>
+                            <a href="#" class="footer-link">Texnologiya</a>
+                        </nav>
+                    </div>
+
+                    <!-- Legal Links -->
+                    <div class="footer-legal-section">
+                        <h4 class="footer-section-title">Ma'lumot</h4>
+                        <nav class="footer-links">
+                            <a href="#" class="footer-link">Biz haqimizda</a>
+                            <a href="#" class="footer-link">Maxfiylik siyosati</a>
+                            <a href="#" class="footer-link">Foydalanish shartlari</a>
+                            <a href="#" class="footer-link">Reklama</a>
+                            <a href="#" class="footer-link">Vakansiyalar</a>
+                            <a href="#" class="footer-link">Aloqa</a>
+                        </nav>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div class="footer-contact-section">
+                        <h4 class="footer-section-title">Bog'lanish</h4>
+                        <form id="contactForm" class="footer-contact-form" method="post"
+                            action="{% url 'send_message' %}">
+                            {% csrf_token %}
+                            <div class="footer-input-group">
+                                <div class="footer-input-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+                                        <g fill="none" stroke="currentColor" stroke-linecap="round"
+                                            stroke-linejoin="round" stroke-width="2">
+                                            <path d="m22 7l-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+                                            <rect width="20" height="16" x="2" y="4" rx="2" />
+                                        </g>
+                                    </svg>
+                                </div>
+                                <input type="text" name="message" placeholder="Murojaat matnini kiriting..."
+                                    class="footer-input" required>
+                            </div>
+
+                            <div class="footer-input-group">
+                                <div class="footer-input-icon">📞</div>
+                                <input type="tel" id="phone" name="phone" placeholder="+998 XX XXX XX XX"
+                                    class="footer-input" maxlength="17" required>
+                            </div>
+
+                            <button type="submit" class="footer-submit-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                        stroke-linejoin="round" stroke-width="2"
+                                        d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11zm7.318-19.539l-10.94 10.939" />
+                                </svg>
+                                <span>Yuborish</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="footer-bottom">
+            <div class="footer-bottom-content">
+                <div class="footer-copyright">
+                    <span>© 2025 Yangiliklar Hub. Barcha huquqlar himoyalangan.</span>
+                    <div class="footer-uzbekistan-flag">
+                        <div class="footer-flag-stripe footer-flag-blue"></div>
+                        <div class="footer-flag-stripe footer-flag-white"></div>
+                        <div class="footer-flag-stripe footer-flag-green"></div>
+                    </div>
+                </div>
+                <button class="footer-scroll-top" id="footerScrollTop" aria-label="Sahifa boshiga o'tish">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                            stroke-width="2" d="m5 12l7-7l7 7m-7 7V5" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Popup Message -->
+    <div id="popupMessage" class="popup-message">
+        <div class="popup-content">
+            <span id="popupText"></span>
+        </div>
+    </div>
+
+    <script>
+        // Mobile Menu Functionality
+        const mobileToggle = document.getElementById('mobile-menu-toggle');
+        const mobileOverlay = document.getElementById('mobile-navigation-overlay');
+
+        function toggleMobileMenu() {
+            const isExpanded = mobileToggle.getAttribute('aria-expanded') === 'true';
+
+            mobileToggle.setAttribute('aria-expanded', !isExpanded);
+            mobileToggle.setAttribute('aria-label', isExpanded ? 'Menyuni ochish' : 'Menyuni yopish');
+
+            if (isExpanded) {
+                mobileOverlay.classList.remove('navigation-active');
+                document.body.style.overflow = '';
+            } else {
+                mobileOverlay.classList.add('navigation-active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeMobileMenu() {
+            mobileToggle.setAttribute('aria-expanded', 'false');
+            mobileToggle.setAttribute('aria-label', 'Menyuni ochish');
+            mobileOverlay.classList.remove('navigation-active');
+            document.body.style.overflow = '';
+        }
+
+        mobileToggle.addEventListener('click', toggleMobileMenu);
+
+        // Close mobile menu when clicking on overlay
+        mobileOverlay.addEventListener('click', (e) => {
+            if (e.target === mobileOverlay) {
+                closeMobileMenu();
+            }
+        });
+
+        // Close mobile menu when clicking on mobile links
+        const mobileLinks = document.querySelectorAll('.navigation-mobile-link');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && mobileOverlay.classList.contains('navigation-active')) {
+                closeMobileMenu();
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 991) {
+                closeMobileMenu();
+            }
+        });
+
+        // Hero Slider
+        let currentSlide = 0;
+        const slides = document.querySelectorAll(".hero-slide");
+        const slideCount = slides.length;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove("active");
+                if (i === index) {
+                    slide.classList.add("active");
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slideCount;
+            showSlide(currentSlide);
+        }
+
+        // Auto slide if there are multiple slides
+        if (slideCount > 1) {
+            // Avval barcha slaydlarni yashirish
+            slides.forEach(slide => slide.classList.remove("active"));
+            // Faqat birinchi slaydni ko'rsatish
+            showSlide(0);
+
+            // Har 5 soniyada slaydni almashtirish
+            setInterval(nextSlide, 5000);
+        }
+
+        // Category Image Slider - TO'G'RILANGAN (Random vaqt bilan)
+        function initCategorySliders() {
+            const categories = document.querySelectorAll(".category-preview");
+
+            categories.forEach((preview, index) => {
+                const images = preview.querySelectorAll(".category-img");
+
+                if (images.length > 1) {
+                    let currentImageIndex = 0;
+                    let timeoutId = null;
+
+                    // Avval barcha rasmlarni yashirish
+                    images.forEach(img => img.classList.remove("active"));
+                    // Faqat birinchi rasmni ko'rsatish
+                    images[0].classList.add("active");
+
+                    // Rasmni almashitirish funksiyasi
+                    const switchImage = () => {
+                        // Joriy rasmni yashirish
+                        images[currentImageIndex].classList.remove("active");
+
+                        // Keyingi rasmga o'tish
+                        currentImageIndex = (currentImageIndex + 1) % images.length;
+
+                        // Yangi rasmni ko'rsatish
+                        images[currentImageIndex].classList.add("active");
+
+                        // Keyingi almashinish uchun yangi random vaqt
+                        scheduleNextSwitch();
+                    };
+
+                    // Keyingi almashinishni rejalashtirish
+                    const scheduleNextSwitch = () => {
+                        const nextInterval = getRandomInterval(2000, 5000); // 2-5 soniya oralig'i
+                        timeoutId = setTimeout(switchImage, nextInterval);
+                    };
+
+                    // Birinchi almashinishni boshlash
+                    scheduleNextSwitch();
+
+                    // Kategoriya hover qilinganda vaqtincha to'xtatish (ixtiyoriy)
+                    preview.addEventListener('mouseenter', () => {
+                        if (timeoutId) {
+                            clearTimeout(timeoutId);
+                        }
+                    });
+
+                    preview.addEventListener('mouseleave', () => {
+                        scheduleNextSwitch();
+                    });
+                }
+            });
+        }
+
+        // 2-5 soniya oralig'ida random son qaytaruvchi funksiya
+        function getRandomInterval(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Live Search Functionality
+        function setupLiveSearch(inputId, boxId) {
+            const input = document.getElementById(inputId);
+            const suggestionsBox = document.getElementById(boxId);
+
+            if (!input) return;
+
+            input.addEventListener("keyup", function () {
+                let query = this.value.trim();
+                if (query.length < 2) {
+                    suggestionsBox.style.display = "none";
+                    return;
+                }
+
+                // Simulate API call
+                setTimeout(() => {
+                    suggestionsBox.innerHTML = "";
+
+                    // Mock suggestions
+                    const mockSuggestions = [
+                        { title: "Yangi soliq islohoti", url: "#" },
+                        { title: "Sport yangiliklari", url: "#" },
+                        { title: "Texnologiya yangiliklari", url: "#" }
+                    ];
+
+                    if (mockSuggestions.length > 0) {
+                        mockSuggestions.forEach(item => {
+                            let div = document.createElement("div");
+                            div.classList.add("suggestion-item");
+                            div.textContent = item.title;
+                            div.addEventListener("click", () => {
+                                window.location.href = item.url;
+                            });
+                            suggestionsBox.appendChild(div);
+                        });
+                        suggestionsBox.style.display = "block";
+                    } else {
+                        suggestionsBox.style.display = "none";
+                    }
+                }, 300);
+            });
+
+            // Hide suggestions when clicking outside
+            document.addEventListener("click", function (e) {
+                if (!e.target.closest(`#${inputId}`) && !e.target.closest(`#${boxId}`)) {
+                    suggestionsBox.style.display = "none";
+                }
+            });
+        }
+
+        // Phone Number Formatting
+        document.getElementById("phone")?.addEventListener("input", function (e) {
+            let value = e.target.value.replace(/\D/g, "");
+            if (!value.startsWith("998")) {
+                value = "998" + value;
+            }
+
+            // Format: +998 XX XXX XX XX
+            let formatted = "+";
+            if (value.length > 0) formatted += value.substring(0, 3);
+            if (value.length > 3) formatted += " " + value.substring(3, 5);
+            if (value.length > 5) formatted += " " + value.substring(5, 8);
+            if (value.length > 8) formatted += " " + value.substring(8, 10);
+            if (value.length > 10) formatted += " " + value.substring(10, 12);
+
+            e.target.value = formatted;
+        });
+
+        // Contact Form Submission
+        document.getElementById("contactForm")?.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            let message = this.querySelector("input[name='message']").value.trim();
+            let phone = this.querySelector("input[name='phone']").value.trim();
+
+            if (message && phone) {
+                showPopup("✅ Murojaat yuborildi! Tez orada siz bilan bog'lanamiz.");
+                this.reset();
+            } else {
+                showPopup("❌ Iltimos, barcha maydonlarni to'ldiring!");
+            }
+        });
+
+        // Popup Message Function
+        function showPopup(text) {
+            const popup = document.getElementById("popupMessage");
+            const popupText = document.getElementById("popupText");
+
+            popupText.textContent = text;
+            popup.classList.add("show");
+
+            setTimeout(() => {
+                popup.classList.remove("show");
+            }, 3000);
+        }
+
+        // Scroll to Top Functionality
+        const scrollTopBtn = document.getElementById('footerScrollTop');
+
+        if (scrollTopBtn) {
+            scrollTopBtn.addEventListener('click', function () {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // Show/hide scroll to top button
+            window.addEventListener('scroll', function () {
+                if (window.pageYOffset > 300) {
+                    scrollTopBtn.style.opacity = '1';
+                    scrollTopBtn.style.visibility = 'visible';
+                } else {
+                    scrollTopBtn.style.opacity = '0';
+                    scrollTopBtn.style.visibility = 'hidden';
+                }
+            });
+
+            // Initial state
+            scrollTopBtn.style.transition = 'all 0.3s ease';
+            scrollTopBtn.style.opacity = '0';
+            scrollTopBtn.style.visibility = 'hidden';
+        }
+
+        // Responsive Image Optimization
+        function optimizeImages() {
+            const images = document.querySelectorAll('img');
+            const isMobile = window.innerWidth < 768;
+
+            images.forEach(img => {
+                if (!img.loading) {
+                    img.loading = 'lazy';
+                }
+            });
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function () {
+            optimizeImages();
+            initCategorySliders();
+
+            // Setup search for both desktop and mobile
+            setupLiveSearch("searchInputDesktop", "suggestionsBoxDesktop");
+            setupLiveSearch("searchInputMobile", "suggestionsBoxMobile");
+
+            // Add loading state to images
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                img.addEventListener('load', function () {
+                    this.style.opacity = '1';
+                });
+                img.style.opacity = '0';
+                img.style.transition = 'opacity 0.3s ease';
+            });
+        });
+
+        console.log('Yangiliklar Hub sahifasi yuklandi');
+        // Kategoriyalar slayderi uchun JavaScript
+        document.addEventListener("DOMContentLoaded", () => {
+            const categories = document.querySelectorAll(".category-preview");
+
+            categories.forEach(preview => {
+                let images = preview.querySelectorAll(".category-img");
+
+                // Agar faqat bitta rasm bo'lsa, slider kerak emas
+                if (images.length <= 1) return;
+
+                // Har bir kategoriya uchun alohida interval o'rnatish
+                setInterval(() => {
+                    if (images.length > 0) {
+                        // Hozirgi active rasmni topamiz
+                        let activeImg = preview.querySelector(".category-img.active");
+                        activeImg.classList.remove("active");
+
+                        // Keyingi rasmni topamiz
+                        let nextImg = activeImg.nextElementSibling;
+                        if (!nextImg) {
+                            nextImg = images[0]; // Agar oxirgi rasm bo'lsa, birinchi rasmga qaytamiz
+                        }
+                        nextImg.classList.add("active");
+                    }
+                }, Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000); // 2s - 5s oralig'ida
+            });
+        });
+    </script>
+</body>
 
